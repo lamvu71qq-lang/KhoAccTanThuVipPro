@@ -109,6 +109,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
       <input id="tgC" class="in" placeholder="Chat ID (-100...)"><label class="hint"><input type="checkbox" id="tgOn"> Bật thông báo Telegram</label>
       <div class="row"><button class="btn s" id="tgTest">Gửi thử</button><button class="btn" id="tgSave">Lưu</button></div></div>
     <div class="box"><b>Thông tin nạp tiền cho khách</b><br><br><textarea id="depIn" class="in" style="font-family:inherit" placeholder="VD: Vietcombank - 0123456789 - NGUYEN VAN A"></textarea><button class="btn" id="depSave">Lưu thông tin</button></div>
+    <div class="box"><b>Sao lưu dữ liệu</b><p class="hint">Sao lưu acc và data (không gồm người dùng, số dư).</p><div class="row"><button class="btn s" id="bkExp">Sao lưu JSON</button><button class="btn s" id="bkImp">Khôi phục JSON</button></div><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
   </section>
 
   <section id="v-utopup" class="v us">
@@ -128,13 +129,13 @@ import { getDatabase, ref, push, set, get, onValue, remove, update, runTransacti
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBCxeCdn5krOH6PnZlytXkoPfexG_2qYsg",
-  authDomain: "keiths-hotdog.firebaseapp.com",
-  databaseURL: "https://keiths-hotdog-default-rtdb.firebaseio.com",
-  projectId: "keiths-hotdog",
-  storageBucket: "keiths-hotdog.firebasestorage.app",
-  messagingSenderId: "758659658484",
-  appId: "1:758659658484:web:b21488b8eeccabb5d464a1"
+  apiKey: "AIzaSyD7jaDAoDexlm_Iizfj58bj2U5wNOyvNvs",
+  authDomain: "bu-store-882fe.firebaseapp.com",
+  databaseURL: "https://bu-store-882fe-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "bu-store-882fe",
+  storageBucket: "bu-store-882fe.firebasestorage.app",
+  messagingSenderId: "451270615539",
+  appId: "1:451270615539:web:b115d5925aa2b252e17286"
 };
 const fb = initializeApp(firebaseConfig), db = getDatabase(fb), auth = getAuth(fb);
 
@@ -530,6 +531,27 @@ $('tgTest').onclick = async () => {
   toast(`Bot thông báo: ${a ? 'OK' : 'lỗi'} · Bot acc + data: ${b ? 'OK' : 'lỗi'}`, !(a && b));
 };
 $('depSave').onclick = () => set(ref(db, 'public/depositInfo'), $('depIn').value.trim().slice(0, 600)).then(() => toast('Đã lưu thông tin nạp tiền')).catch(e => toast(e.message, 1));
+
+/* ---------- sao lưu / khôi phục (admin) ---------- */
+$('bkExp').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportedAt: Date.now(), accban: accDB, khodata: dataDB }, null, 2)], { type: 'application/json' }));
+  a.download = 'qlifc-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+};
+$('bkImp').onclick = () => $('bkFile').click();
+$('bkFile').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text()), A = Object.values(j.accban || {}), D = Object.values(j.khodata || {});
+    if (!A.length && !D.length) return toast('File không có dữ liệu hợp lệ', 1);
+    if (!confirm(`Khôi phục ${A.length} acc và ${D.length} data? Mục trùng sẽ bị bỏ qua.`)) return;
+    let ok = 0, dup = 0, err = 0; const jobs = [];
+    A.forEach(a => { if (!a || !a.tk || !a.mk || !a.passRut || !a.name) return err++; jobs.push(create('accban', keyAcc(a.tk), { tk: a.tk, mk: a.mk, passRut: a.passRut, name: a.name, sold: !!a.sold, soldAt: a.soldAt || null, soldBy: a.soldBy || null, createdAt: a.createdAt || Date.now(), createdBy: a.createdBy || me.username })); });
+    D.forEach(d => { const b = String(d && d.bank || '').toUpperCase(); if (!d || !d.accId || !d.name || !BANKS.includes(b)) return err++; jobs.push(create('khodata', keyData(d.accId, b), { accId: d.accId, name: d.name, bank: b, taken: !!d.taken, takenAt: d.takenAt || null, takenBy: d.takenBy || null, createdAt: d.createdAt || Date.now(), createdBy: d.createdBy || me.username })); });
+    (await Promise.all(jobs)).forEach(r => r ? ok++ : dup++);
+    toast(`Khôi phục ${ok} · trùng ${dup} · lỗi ${err}`, dup || err);
+  } catch (x) { toast('Không đọc được file: ' + x.message, 1); }
+};
 
 setType('acc'); setMode('login');
 </script>
