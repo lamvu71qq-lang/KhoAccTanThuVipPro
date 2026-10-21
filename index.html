@@ -84,6 +84,11 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.55;font-family:ui-
 .hint{font-size:12px;color:var(--sub);margin:-6px 0 14px;line-height:1.5}
 .hint code{background:rgba(255,255,255,.07);padding:2px 6px;border-radius:6px;color:var(--blue);font-size:11px}
 
+select.input{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:42px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='%238b95a8'><path d='M7 10l5 5 5-5z'/></svg>");background-repeat:no-repeat;background-position:right 14px center}
+select.input option{background:#14162a;color:#fff}
+.bank-row{margin-top:12px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.18)}
+.bank-badge{flex:none;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;padding:5px 10px;border-radius:9px;color:#06121a;background:var(--blue);letter-spacing:.5px}
+.bank-name{font-size:13px;color:#cfe9ee;font-weight:500;word-break:break-word}
 /* search */
 .search{position:relative;margin-bottom:16px}
 .search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:var(--sub)}
@@ -200,7 +205,7 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.55;font-family:ui-
     <div id="view-list" class="view active">
       <div class="search">
         <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-        <input type="text" id="searchInput" class="input" placeholder="Tìm theo tên, mã số acc, tên lưu ý...">
+        <input type="text" id="searchInput" class="input" placeholder="Tìm theo mã số, tên, ngân hàng...">
       </div>
       <div class="list" id="dataList"></div>
     </div>
@@ -209,9 +214,9 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.55;font-family:ui-
     <div id="view-add" class="view">
       <h3 class="panel-title" id="formTitle">THÊM DATA MỚI</h3>
       <input type="hidden" id="editKey">
-      <div class="field"><label><i>01</i> Tên</label><input type="text" id="fName" class="input" placeholder="Nhập tên"></div>
-      <div class="field"><label><i>02</i> Mã số acc</label><input type="text" id="fId" class="input" placeholder="Nhập mã số acc" inputmode="text"></div>
-      <div class="field"><label><i>03</i> Tên lưu ý</label><input type="text" id="fNote" class="input" placeholder="Ghi chú / tên lưu"></div>
+      <div class="field"><label><i>01</i> Mã số</label><input type="text" id="fId" class="input" placeholder="Nhập mã số / số tài khoản" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label><i>02</i> Tên</label><input type="text" id="fName" class="input" placeholder="Nhập tên"></div>
+      <div class="field"><label><i>03</i> Mã (Ngân hàng)</label><select id="fBank" class="input"></select></div>
       <button class="btn" id="btnSave">LƯU DATA</button>
       <button class="btn ghost" id="btnCancel" style="display:none">HỦY CHỈNH SỬA</button>
     </div>
@@ -219,8 +224,8 @@ textarea.input{min-height:120px;resize:vertical;line-height:1.55;font-family:ui-
     <!-- BULK -->
     <div id="view-bulk" class="view">
       <h3 class="panel-title">NHẬP NHIỀU DÒNG</h3>
-      <p class="hint">Mỗi dòng một data theo định dạng <code>tên|mã số acc|tên lưu ý</code></p>
-      <div class="field"><textarea id="bulkText" class="input" placeholder="Gbao|123456789|Acc chính&#10;Minh|987654321|Khách quen"></textarea></div>
+      <p class="hint">Mỗi dòng một data theo định dạng <code>mã số|tên|mã</code> — mã là viết tắt ngân hàng (VCB, MB, ACB, TCB, BIDV...)</p>
+      <div class="field"><textarea id="bulkText" class="input" placeholder="0123456789|NGUYEN VAN A|VCB&#10;9876543210|TRAN THI B|MB"></textarea></div>
       <button class="btn" id="btnBulk">NHẬP TẤT CẢ</button>
     </div>
   </div>
@@ -247,8 +252,32 @@ const ADMIN_PASSWORD = "123";
 let localDB = {};
 let listening = false;
 
+// Danh sách ngân hàng Việt Nam: [mã, tên đầy đủ]
+const BANKS = [
+  ['VCB','Vietcombank'],['BIDV','BIDV'],['CTG','VietinBank'],['AGR','Agribank'],
+  ['TCB','Techcombank'],['MB','MB Bank'],['ACB','ACB'],['VPB','VPBank'],
+  ['STB','Sacombank'],['TPB','TPBank'],['HDB','HDBank'],['VIB','VIB'],
+  ['SHB','SHB'],['MSB','MSB'],['OCB','OCB'],['SSB','SeABank'],
+  ['LPB','LPBank (LienVietPostBank)'],['EIB','Eximbank'],['NAB','Nam A Bank'],['ABB','ABBank'],
+  ['BAB','Bac A Bank'],['VAB','VietABank'],['NCB','NCB'],['PGB','PGBank'],
+  ['SCB','SCB'],['VBB','VietBank'],['BVB','BaoViet Bank'],['KLB','KienlongBank'],
+  ['VCCB','Viet Capital Bank'],['SGB','Saigonbank'],['GPB','GPBank'],['CBB','CB Bank'],
+  ['OJB','Oceanbank'],['VRB','VRB'],['IVB','Indovina Bank'],['COOP','Co-opBank'],
+  ['CAKE','CAKE by VPBank'],['UBANK','Ubank by VPBank'],['TIMO','Timo'],['VIETTELMONEY','Viettel Money'],
+  ['SHBVN','Shinhan Bank VN'],['WOO','Woori Bank VN'],['HSBC','HSBC VN'],['SCVN','Standard Chartered VN'],
+  ['CIMB','CIMB Bank VN'],['UOB','UOB VN'],['PBVN','Public Bank VN'],['HLBVN','Hong Leong Bank VN'],
+  ['DBS','DBS Bank'],['KBANK','KBank VN'],['KEBHANAHN','KEB Hana Bank'],['NHB','Nonghyup Bank'],
+  ['CITI','Citibank VN'],['ANZ','ANZ VN'],['VIKKI','Vikki Bank'],['MOMO','Ví MoMo'],
+  ['ZALOPAY','ZaloPay'],['KHAC','Khác']
+];
+const bankName = code => (BANKS.find(b => b[0] === String(code||'').toUpperCase()) || [,''])[1];
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- bank select ---------- */
+$('fBank').innerHTML = '<option value="">— Chọn ngân hàng —</option>' +
+  BANKS.map(b => `<option value="${b[0]}">${b[0]} - ${b[1]}</option>`).join('');
 
 /* ---------- toast ---------- */
 function toast(msg, type='ok'){
@@ -310,7 +339,7 @@ function render(){
   keys.forEach((key, i) => {
     const it = localDB[key]; total++;
     if ((it.createdAt||0) >= startOfDay.getTime()) today++;
-    if (kw && ![it.name, it.accId, it.note].some(v => String(v||'').toLowerCase().includes(kw))) return;
+    if (kw && ![it.accId, it.name, it.bank, bankName(it.bank)].some(v => String(v||'').toLowerCase().includes(kw))) return;
     shown++;
     const initial = esc((it.name||'?').trim().charAt(0).toUpperCase() || '?');
     const date = it.createdAt ? new Date(it.createdAt).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
@@ -319,11 +348,11 @@ function render(){
         <div class="card-top">
           <div class="avatar">${initial}</div>
           <div style="min-width:0">
+            <div class="card-id"><span>SỐ</span>${esc(it.accId)}</div>
             <div class="card-name">${esc(it.name)}</div>
-            <div class="card-id"><span>ID</span>${esc(it.accId)}</div>
           </div>
         </div>
-        ${it.note ? `<div class="note"><b>Lưu ý</b><div>${esc(it.note)}</div></div>` : ''}
+        <div class="bank-row"><span class="bank-badge">${esc(it.bank || '—')}</span><span class="bank-name">${esc(bankName(it.bank) || 'Chưa chọn ngân hàng')}</span></div>
         <div class="card-foot">
           <div class="time">${date}</div>
           <div class="acts">
@@ -346,8 +375,8 @@ $('dataList').addEventListener('click', async e => {
   const btn = e.target.closest('[data-act]'); if (!btn) return;
   const key = btn.dataset.key, it = localDB[key]; if (!it) return;
   if (btn.dataset.act === 'copy'){
-    const txt = `${it.name}|${it.accId}|${it.note||''}`;
-    try { await navigator.clipboard.writeText(txt); toast('Đã sao chép: tên|mã|lưu ý'); }
+    const txt = `${it.accId}|${it.name}|${it.bank||''}`;
+    try { await navigator.clipboard.writeText(txt); toast('Đã sao chép: mã số|tên|mã'); }
     catch { toast('Không thể sao chép','err'); }
   } else if (btn.dataset.act === 'edit'){
     startEdit(key);
@@ -359,7 +388,7 @@ $('dataList').addEventListener('click', async e => {
 });
 
 /* ---------- add / edit ---------- */
-function clearForm(){ ['editKey','fName','fId','fNote'].forEach(id => $(id).value=''); }
+function clearForm(){ ['editKey','fName','fId','fBank'].forEach(id => $(id).value=''); }
 function resetFormUI(){
   clearForm();
   $('formTitle').textContent = 'THÊM DATA MỚI';
@@ -367,10 +396,10 @@ function resetFormUI(){
   $('btnCancel').style.display = 'none';
 }
 $('btnSave').onclick = () => {
-  const name = $('fName').value.trim(), accId = $('fId').value.trim(), note = $('fNote').value.trim();
+  const name = $('fName').value.trim(), accId = $('fId').value.trim(), bank = $('fBank').value;
   const editKey = $('editKey').value;
-  if (!name || !accId){ toast('Vui lòng nhập Tên và Mã số acc!','err'); return; }
-  const payload = { name, accId, note };
+  if (!accId || !name || !bank){ toast('Vui lòng nhập Mã số, Tên và chọn Ngân hàng!','err'); return; }
+  const payload = { accId, name, bank };
   if (editKey){
     update(ref(db, `${DATA_PATH}/${editKey}`), payload).then(()=>{ resetFormUI(); switchTab('list'); toast('Đã cập nhật'); }).catch(e=>toast(e.message,'err'));
   } else {
@@ -381,7 +410,7 @@ $('btnSave').onclick = () => {
 $('btnCancel').onclick = () => { resetFormUI(); switchTab('list'); };
 function startEdit(key){
   const t = localDB[key]; if (!t) return;
-  $('editKey').value = key; $('fName').value = t.name||''; $('fId').value = t.accId||''; $('fNote').value = t.note||'';
+  $('editKey').value = key; $('fName').value = t.name||''; $('fId').value = t.accId||''; $('fBank').value = t.bank||'';
   $('formTitle').textContent = 'CHỈNH SỬA DATA';
   $('btnSave').textContent = 'CẬP NHẬT NGAY';
   $('btnCancel').style.display = 'block';
@@ -395,9 +424,10 @@ $('btnBulk').onclick = async () => {
   let ok = 0, bad = 0, now = Date.now();
   const jobs = [];
   lines.forEach((l, i) => {
-    const [name, accId, ...rest] = l.split('|').map(s=>s.trim());
-    if (!name || !accId){ bad++; return; }
-    jobs.push(push(ref(db, DATA_PATH), { name, accId, note: rest.join('|'), createdAt: now + i }));
+    const [accId, name, bankRaw] = l.split('|').map(s=>s.trim());
+    const bank = String(bankRaw||'').toUpperCase().replace(/\s+/g,'');
+    if (!accId || !name || !BANKS.some(b => b[0] === bank)){ bad++; return; }
+    jobs.push(push(ref(db, DATA_PATH), { accId, name, bank, createdAt: now + i }));
     ok++;
   });
   try {
