@@ -1,593 +1,428 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MASTER ADMIN - KHO QLI FC</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-main: #0a0b10;
-            --panel-bg: rgba(20, 22, 37, 0.6);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --neon-blue: #00f3ff;
-            --neon-pink: #ff007f;
-            --neon-green: #39ff14;
-            --text-main: #ffffff;
-            --text-sub: #8f9cae;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MASTER ADMIN - KHO QLI FC</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080f;
+  --glass:rgba(22,24,42,.55);
+  --glass-2:rgba(255,255,255,.04);
+  --line:rgba(255,255,255,.08);
+  --blue:#00e5ff;
+  --pink:#ff2d95;
+  --violet:#8b5cf6;
+  --green:#39ff88;
+  --red:#ff4d6d;
+  --amber:#ffb020;
+  --text:#f4f6fb;
+  --sub:#8b95a8;
+  --grad:linear-gradient(120deg,var(--blue),var(--violet) 55%,var(--pink));
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  padding:max(18px,env(safe-area-inset-top)) 16px 40px;
+  display:flex;justify-content:center;position:relative;overflow-x:hidden;
+}
+/* aurora background */
+body::before,body::after{
+  content:"";position:fixed;width:420px;height:420px;border-radius:50%;filter:blur(110px);opacity:.35;z-index:0;pointer-events:none;
+  animation:float 14s ease-in-out infinite alternate;
+}
+body::before{background:var(--violet);top:-120px;left:-100px}
+body::after{background:var(--blue);bottom:-140px;right:-120px;animation-delay:-6s;opacity:.25}
+@keyframes float{to{transform:translate(60px,50px) scale(1.15)}}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+.container{width:100%;max-width:520px;display:flex;flex-direction:column;gap:18px;position:relative;z-index:1}
 
-        body {
-            background: radial-gradient(circle at 50% 0%, #1a1b35 0%, var(--bg-main) 70%);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* header */
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 2px}
+.logo h1{font-family:'Orbitron',sans-serif;font-size:23px;font-weight:900;letter-spacing:1.5px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.logo p{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--sub);letter-spacing:3px;margin-top:4px}
+.icon-btn{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:var(--glass-2);display:grid;place-items:center;cursor:pointer;transition:.25s;color:var(--red)}
+.icon-btn:active{transform:scale(.92);background:rgba(255,77,109,.15)}
+.icon-btn svg{width:20px;height:20px;fill:currentColor}
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding-bottom: 40px;
-        }
+/* glass panel */
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:26px;padding:22px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06)}
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 5px;
-        }
+/* stats */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{position:relative;overflow:hidden;padding:18px;border-radius:20px;background:var(--glass-2);border:1px solid var(--line)}
+.stat::after{content:"";position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:var(--c);opacity:.18;filter:blur(18px)}
+.stat small{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--sub)}
+.stat b{display:block;margin-top:8px;font-family:'Orbitron',sans-serif;font-size:32px;font-weight:700;color:#fff;text-shadow:0 0 18px var(--c)}
+.stat.a{--c:var(--blue)}.stat.b{--c:var(--pink)}
 
-        .logo h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+/* tabs */
+.tabs{position:relative;display:grid;grid-template-columns:repeat(3,1fr);background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:18px;padding:5px}
+.tab{position:relative;z-index:1;background:none;border:none;color:var(--sub);padding:12px 6px;font-size:13px;font-weight:600;border-radius:13px;cursor:pointer;transition:color .3s;display:flex;gap:6px;align-items:center;justify-content:center}
+.tab.active{color:#fff}
+.tab svg{width:16px;height:16px;fill:currentColor}
+.tab-glider{position:absolute;top:5px;bottom:5px;left:5px;width:calc((100% - 10px)/3);border-radius:13px;background:linear-gradient(120deg,rgba(0,229,255,.22),rgba(139,92,246,.25));border:1px solid rgba(0,229,255,.3);box-shadow:0 0 18px rgba(0,229,255,.15);transition:transform .35s cubic-bezier(.4,.2,.2,1)}
 
-        .logo p {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
-            color: var(--text-sub);
-            letter-spacing: 2px;
-            margin-top: 2px;
-        }
+.view{display:none;animation:fade .35s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}}
 
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* forms */
+.field{margin-bottom:16px}
+.field label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.4px;color:var(--sub);margin-bottom:8px;text-transform:uppercase}
+.field label i{font-style:normal;color:var(--blue)}
+.input{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);padding:14px 16px;border-radius:14px;color:#fff;font-size:15px;outline:none;transition:.25s}
+.input::placeholder{color:#59627a}
+.input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(0,229,255,.1)}
+textarea.input{min-height:120px;resize:vertical;line-height:1.55;font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.btn{width:100%;border:none;padding:15px;border-radius:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;background:var(--grad);box-shadow:0 8px 24px rgba(139,92,246,.35);transition:.25s;letter-spacing:.3px}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:var(--glass-2);border:1px solid var(--line);box-shadow:none;margin-top:10px;font-weight:600}
+.panel-title{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:1px;margin-bottom:18px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hint{font-size:12px;color:var(--sub);margin:-6px 0 14px;line-height:1.5}
+.hint code{background:rgba(255,255,255,.07);padding:2px 6px;border-radius:6px;color:var(--blue);font-size:11px}
 
-        .logout-btn:active {
-            background: rgba(255, 71, 87, 0.2);
-            transform: scale(0.95);
-        }
+/* search */
+.search{position:relative;margin-bottom:16px}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:var(--sub)}
+.search .input{padding-left:44px}
 
-        .logout-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #ff4757;
-        }
+/* records */
+.list{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow-y:auto;padding-right:3px}
+.list::-webkit-scrollbar{width:4px}
+.list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:10px}
+.card{background:var(--glass-2);border:1px solid var(--line);border-radius:18px;padding:16px;position:relative;overflow:hidden;animation:fade .4s ease both;transition:.25s}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad)}
+.card:hover{border-color:rgba(0,229,255,.25);transform:translateY(-1px)}
+.card-top{display:flex;align-items:center;gap:12px}
+.avatar{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-family:'Orbitron',sans-serif;font-weight:700;font-size:17px;color:#0a0b10;background:var(--grad)}
+.card-name{font-weight:700;font-size:16px;word-break:break-word}
+.card-id{margin-top:3px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--blue);display:flex;align-items:center;gap:6px;word-break:break-all}
+.card-id span{color:var(--sub);font-family:'Inter',sans-serif;font-size:11px}
+.note{margin-top:12px;padding:10px 12px;border-radius:12px;background:rgba(255,176,32,.07);border:1px dashed rgba(255,176,32,.3);font-size:13px;color:#ffd58a;line-height:1.5;word-break:break-word;display:flex;gap:8px}
+.note b{flex:none;font-size:11px;letter-spacing:.5px;color:var(--amber);text-transform:uppercase;padding-top:2px}
+.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)}
+.time{font-size:11px;color:var(--sub)}
+.acts{display:flex;gap:8px}
+.act{width:34px;height:34px;border-radius:10px;border:none;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.act:active{transform:scale(.88)}
+.act svg{width:16px;height:16px}
+.act.copy{background:rgba(0,229,255,.1)}.act.copy svg{fill:var(--blue)}
+.act.edit{background:rgba(255,176,32,.1)}.act.edit svg{fill:var(--amber)}
+.act.del{background:rgba(255,77,109,.1)}.act.del svg{fill:var(--red)}
+.empty{text-align:center;color:var(--sub);padding:34px 10px;font-size:14px;line-height:1.7}
+.empty big{display:block;font-size:34px;margin-bottom:6px;opacity:.6}
 
-        .panel {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 24px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+/* login / overlays */
+.overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(7,8,15,.82);backdrop-filter:blur(10px)}
+.login{width:100%;max-width:370px;text-align:center}
+.login .lock{width:64px;height:64px;margin:0 auto 14px;border-radius:20px;display:grid;place-items:center;background:var(--grad);box-shadow:0 0 40px rgba(139,92,246,.5)}
+.login .lock svg{width:30px;height:30px;fill:#fff}
+.login h2{font-family:'Orbitron',sans-serif;font-size:19px;margin-bottom:6px;letter-spacing:1px}
+.login p{font-size:12.5px;color:var(--sub);margin-bottom:22px}
+.login .input{text-align:center;letter-spacing:6px;font-size:18px}
+.login .field{text-align:left}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.loader{font-family:'Orbitron',sans-serif;color:var(--blue);font-size:13px;letter-spacing:2px;text-align:center}
+.loader::before{content:"";display:block;width:38px;height:38px;margin:0 auto 14px;border-radius:50%;border:3px solid rgba(0,229,255,.15);border-top-color:var(--blue);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
+/* confirm modal */
+.modal{width:100%;max-width:340px;text-align:center}
+.modal h3{font-size:17px;margin-bottom:8px}
+.modal p{font-size:13.5px;color:var(--sub);margin-bottom:20px;line-height:1.5}
+.modal .row{display:flex;gap:10px}
+.modal .btn{padding:13px}
+.btn.danger{background:linear-gradient(120deg,#ff4d6d,#ff2d95);box-shadow:0 8px 24px rgba(255,45,149,.35)}
 
-        .stat-card {
-            padding: 20px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card.total {
-            border-left: 4px solid var(--neon-blue);
-        }
-
-        .stat-card.used {
-            border-left: 4px solid var(--neon-pink);
-            margin-top: 5px;
-        }
-
-        .stat-card h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            color: var(--text-sub);
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .stat-card .value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 36px;
-            font-weight: 700;
-            margin-top: 10px;
-            color: #fff;
-        }
-
-        .nav-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-sub);
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
-
-        .tab-btn.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--neon-blue);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .view-section {
-            display: none;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-sub);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-control {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 14px 16px;
-            border-radius: 14px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .form-control:focus {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            border: none;
-            padding: 16px;
-            border-radius: 14px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-        }
-
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .account-list::-webkit-scrollbar { width: 4px; }
-        .account-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        .account-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .acc-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .acc-user { font-weight: 600; font-size: 16px; color: #fff; }
-        .acc-pass { font-size: 13px; color: var(--text-sub); margin-top: 2px; font-family: monospace; }
-
-        .badge {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-        }
-
-        .badge.mpx1 { background: rgba(0, 243, 255, 0.15); color: var(--neon-blue); }
-        .badge.mpx2 { background: rgba(255, 0, 127, 0.15); color: var(--neon-pink); }
-        .badge.mpx3 { background: rgba(57, 255, 20, 0.15); color: var(--neon-green); }
-        .badge.other { background: rgba(255, 255, 255, 0.1); color: #fff; }
-
-        .acc-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            padding-top: 10px;
-            margin-top: 2px;
-        }
-
-        .status-toggle {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            color: var(--text-sub);
-        }
-
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff4757; }
-        .status-toggle.active .status-dot { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
-        .status-toggle.active { color: #fff; }
-
-        .action-btns { display: flex; gap: 8px; }
-        .action-btn { background: none; border: none; padding: 6px; cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .action-btn.edit { background: rgba(255, 159, 67, 0.1); }
-        .action-btn.delete { background: rgba(255, 71, 87, 0.1); }
-        .action-btn.edit svg { fill: #ff9f43; width: 16px; height: 16px; }
-        .action-btn.delete svg { fill: #ff4757; width: 16px; height: 16px; }
-
-        .login-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-main); z-index: 9999;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-        }
-
-        .login-box {
-            width: 100%; max-width: 360px;
-            background: var(--panel-bg); border: 1px solid var(--panel-border);
-            border-radius: 24px; padding: 30px; text-align: center; backdrop-filter: blur(20px);
-        }
-
-        .login-box h2 {
-            font-family: 'Orbitron', sans-serif; font-size: 20px; margin-bottom: 24px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 11, 16, 0.9); z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Orbitron', sans-serif; color: var(--neon-blue); font-size: 16px;
-        }
-    </style>
+/* toast */
+#toasts{position:fixed;left:0;right:0;bottom:24px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:20000;pointer-events:none}
+.toast{padding:12px 20px;border-radius:14px;font-size:13.5px;font-weight:600;background:rgba(20,22,37,.95);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toast .35s ease both}
+.toast.ok{border-color:rgba(57,255,136,.4);color:var(--green)}
+.toast.err{border-color:rgba(255,77,109,.4);color:var(--red)}
+@keyframes toast{from{opacity:0;transform:translateY(14px) scale(.95)}}
+</style>
 </head>
 <body>
 
-    <div id="loginScreen" class="login-screen">
-        <div class="login-box">
-            <h2>HỆ THỐNG QUẢN LÝ</h2>
-            <div class="form-group" style="text-align: left;">
-                <label>Mã truy cập Admin</label>
-                <input type="password" id="adminCodeInput" class="form-control" placeholder="••••••••" style="text-align: center; letter-spacing: 4px;">
-            </div>
-            <button class="btn-submit" onclick="checkLogin()">XÁC THỰC</button>
-        </div>
+<!-- LOGIN -->
+<div id="loginScreen" class="overlay" style="background:var(--bg)">
+  <div class="panel login" id="loginBox">
+    <div class="lock"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6zm3 11a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg></div>
+    <h2>HỆ THỐNG QUẢN LÝ</h2>
+    <p>Nhập mã truy cập Admin để tiếp tục</p>
+    <div class="field"><input type="password" id="adminCodeInput" class="input" placeholder="••••••" autocomplete="off"></div>
+    <button class="btn" id="btnLogin">XÁC THỰC</button>
+  </div>
+</div>
+
+<div id="loadingOverlay" class="overlay" style="display:none"><div class="loader">ĐANG KẾT NỐI DATABASE...</div></div>
+
+<!-- CONFIRM -->
+<div id="confirmOverlay" class="overlay" style="display:none">
+  <div class="panel modal">
+    <h3>Xóa dữ liệu này?</h3>
+    <p id="confirmText">Hành động này không thể hoàn tác.</p>
+    <div class="row">
+      <button class="btn ghost" id="btnConfirmNo" style="margin-top:0">Hủy</button>
+      <button class="btn danger" id="btnConfirmYes">Xóa</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<div class="container">
+  <header>
+    <div class="logo"><h1>MASTER ADMIN</h1><p>KHO QLI FC BY GBAO</p></div>
+    <button class="icon-btn" id="btnLogout" title="Đăng xuất"><svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg></button>
+  </header>
+
+  <div class="panel">
+    <div class="stats">
+      <div class="stat a"><small>TỔNG DATA</small><b id="totalCount">0</b></div>
+      <div class="stat b"><small>THÊM HÔM NAY</small><b id="todayCount">0</b></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab-glider" id="glider"></div>
+    <button class="tab active" data-tab="list"><svg viewBox="0 0 24 24"><path d="M3 5h2v2H3V5zm4 0h14v2H7V5zM3 11h2v2H3v-2zm4 0h14v2H7v-2zM3 17h2v2H3v-2zm4 0h14v2H7v-2z"/></svg>Danh sách</button>
+    <button class="tab" data-tab="add"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>Thêm</button>
+    <button class="tab" data-tab="bulk"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm1 7V3.5L18.5 9H15z"/></svg>Nhập nhiều</button>
+  </div>
+
+  <div class="panel">
+    <!-- LIST -->
+    <div id="view-list" class="view active">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" id="searchInput" class="input" placeholder="Tìm theo tên, mã số acc, tên lưu ý...">
+      </div>
+      <div class="list" id="dataList"></div>
     </div>
 
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">ĐANG KẾT NỐI DATABASE ONLINE...</div>
-
-    <div class="container">
-        <header>
-            <div class="logo">
-                <h1>MASTER ADMIN</h1>
-                <p>KHO QLI FC BY GBAO</p>
-            </div>
-            <button class="logout-btn" onclick="logout()">
-                <svg viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"/></svg>
-            </button>
-        </header>
-
-        <div class="panel">
-            <div class="stats-grid">
-                <div class="stat-card total">
-                    <h3>TỔNG KHODATA</h3>
-                    <div class="value" id="totalAccs">0</div>
-                </div>
-                <div class="stat-card used">
-                    <h3>ĐÃ XÀI (MUA)</h3>
-                    <div class="value" id="usedAccs">0</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('list')">Danh Sách</button>
-            <button class="tab-btn" onclick="switchTab('add')">Thêm Acc</button>
-        </div>
-
-        <div class="panel">
-            <div id="tabList" class="view-section active">
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm tài khoản hoặc nhóm mpx..." oninput="renderData()">
-                </div>
-                <div class="account-list" id="accountList"></div>
-            </div>
-
-            <div id="tabAdd" class="view-section">
-                <h3 id="formTitle" style="font-size: 16px; margin-bottom: 20px; color: var(--neon-blue);">THÊM TÀI KHOẢN MỚI</h3>
-                <input type="hidden" id="editKey">
-                <div class="form-group">
-                    <label>Tài khoản (User)</label>
-                    <input type="text" id="accUser" class="form-control" placeholder="Nhập username">
-                </div>
-                <div class="form-group">
-                    <label>Mật khẩu (Pass)</label>
-                    <input type="text" id="accPass" class="form-control" placeholder="Nhập password">
-                </div>
-                <div class="form-group">
-                    <label>Giá trị đội hình (MP)</label>
-                    <input type="number" id="accMP" class="form-control" placeholder="Ví dụ: 25000000">
-                </div>
-                <button class="btn-submit" id="btnSubmitForm" onclick="handleSubmit()">LƯU TÀI KHOẢN</button>
-                <button class="btn-submit" id="btnCancelEdit" onclick="cancelEdit()" style="background: rgba(255,255,255,0.05); color: #fff; box-shadow: none; margin-top: 8px; display: none;">HỦY BỎ</button>
-            </div>
-        </div>
+    <!-- ADD / EDIT -->
+    <div id="view-add" class="view">
+      <h3 class="panel-title" id="formTitle">THÊM DATA MỚI</h3>
+      <input type="hidden" id="editKey">
+      <div class="field"><label><i>01</i> Tên</label><input type="text" id="fName" class="input" placeholder="Nhập tên"></div>
+      <div class="field"><label><i>02</i> Mã số acc</label><input type="text" id="fId" class="input" placeholder="Nhập mã số acc" inputmode="text"></div>
+      <div class="field"><label><i>03</i> Tên lưu ý</label><input type="text" id="fNote" class="input" placeholder="Ghi chú / tên lưu"></div>
+      <button class="btn" id="btnSave">LƯU DATA</button>
+      <button class="btn ghost" id="btnCancel" style="display:none">HỦY CHỈNH SỬA</button>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <!-- BULK -->
+    <div id="view-bulk" class="view">
+      <h3 class="panel-title">NHẬP NHIỀU DÒNG</h3>
+      <p class="hint">Mỗi dòng một data theo định dạng <code>tên|mã số acc|tên lưu ý</code></p>
+      <div class="field"><textarea id="bulkText" class="input" placeholder="Gbao|123456789|Acc chính&#10;Minh|987654321|Khách quen"></textarea></div>
+      <button class="btn" id="btnBulk">NHẬP TẤT CẢ</button>
+    </div>
+  </div>
+</div>
 
-        // Cập nhật cấu hình chính xác theo tài khoản thực tế của bạn
-        const firebaseConfig = {
-            apiKey: "AIzaSyDn-bdtAXYNm_JA6UZ_RLnWRB_lE",
-            authDomain: "qli-fc.firebaseapp.com",
-            databaseURL: "https://qli-fc-default-rtdb.firebaseio.com",
-            projectId: "qli-fc",
-            storageBucket: "qli-fc.firebasestorage.app",
-            messagingSenderId: "297707667192",
-            appId: "1:297707667192:web:002a22e7828c1a16629ad1",
-            measurementId: "G-8352GYD3WR"
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        let localDB = {};
-        const ADMIN_PASSWORD = "123"; // Mã xác thực admin khi mở trang web
+const firebaseConfig = {
+  apiKey: "AIzaSyDn-bdtAXYNm_JA6UZ_RLnWRB_lE",
+  authDomain: "qli-fc.firebaseapp.com",
+  databaseURL: "https://qli-fc-default-rtdb.firebaseio.com",
+  projectId: "qli-fc",
+  storageBucket: "qli-fc.firebasestorage.app",
+  messagingSenderId: "297707667192",
+  appId: "1:297707667192:web:002a22e7828c1a16629ad1",
+  measurementId: "G-8352GYD3WR"
+};
 
-        window.checkLogin = function() {
-            const code = document.getElementById('adminCodeInput').value;
-            if (code === ADMIN_PASSWORD) {
-                document.getElementById('loginScreen').style.display = 'none';
-                localStorage.setItem('admin_session_online', 'true');
-                initDatabaseListener();
-            } else {
-                alert('Mã xác thực không chính xác!');
-            }
-        }
+const db = getDatabase(initializeApp(firebaseConfig));
+const DATA_PATH = 'khodata';          // nhánh dữ liệu mới: tên | mã số acc | tên lưu ý
+const ADMIN_PASSWORD = "123";
+let localDB = {};
+let listening = false;
 
-        window.checkSession = function() {
-            if (localStorage.getItem('admin_session_online') === 'true') {
-                document.getElementById('loginScreen').style.display = 'none';
-                initDatabaseListener();
-            }
-        }
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-        window.logout = function() {
-            localStorage.removeItem('admin_session_online');
-            location.reload();
-        }
+/* ---------- toast ---------- */
+function toast(msg, type='ok'){
+  const t = document.createElement('div');
+  t.className = 'toast ' + type; t.textContent = msg;
+  $('toasts').appendChild(t);
+  setTimeout(()=>{ t.style.transition='.3s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(()=>t.remove(),300); }, 2200);
+}
 
-        function initDatabaseListener() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            onValue(ref(db, 'accounts'), (snapshot) => {
-                const data = snapshot.val();
-                localDB = data ? data : {};
-                renderData();
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }, (error) => {
-                alert("Lỗi kết nối Firebase: " + error.message + "\nHãy kiểm tra xem bạn đã Enable Realtime Database ở Test Mode chưa.");
-            });
-        }
+/* ---------- confirm ---------- */
+function confirmBox(text){
+  return new Promise(res=>{
+    $('confirmText').textContent = text;
+    $('confirmOverlay').style.display = 'flex';
+    const done = v => { $('confirmOverlay').style.display='none'; $('btnConfirmYes').onclick=$('btnConfirmNo').onclick=null; res(v); };
+    $('btnConfirmYes').onclick = () => done(true);
+    $('btnConfirmNo').onclick = () => done(false);
+  });
+}
 
-        function getMPGroup(mpValue) {
-            let mp = parseFloat(mpValue) || 0;
-            if (mp >= 10000000 && mp <= 20000000) return { text: "10M - 20M MP", class: "mpx1" };
-            if (mp > 20000000 && mp <= 40000000) return { text: "20M - 40M MP", class: "mpx2" };
-            if (mp >= 50000000 && mp <= 100000000) return { text: "50M - 100M MP", class: "mpx3" };
-            return { text: "Phổ thông/Khác", class: "other" };
-        }
+/* ---------- auth ---------- */
+function checkLogin(){
+  if ($('adminCodeInput').value === ADMIN_PASSWORD){
+    $('loginScreen').style.display = 'none';
+    localStorage.setItem('admin_session_online','true');
+    initListener();
+  } else {
+    const b = $('loginBox'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+    $('adminCodeInput').value = '';
+    toast('Mã xác thực không chính xác!','err');
+  }
+}
+$('btnLogin').onclick = checkLogin;
+$('adminCodeInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkLogin(); });
+$('btnLogout').onclick = () => { localStorage.removeItem('admin_session_online'); location.reload(); };
 
-        window.renderData = function() {
-            const listContainer = document.getElementById('accountList');
-            const searchKeyword = document.getElementById('searchInput').value.toLowerCase().trim();
-            listContainer.innerHTML = '';
-            let total = 0, used = 0;
+/* ---------- realtime ---------- */
+function initListener(){
+  if (listening) return; listening = true;
+  $('loadingOverlay').style.display = 'flex';
+  onValue(ref(db, DATA_PATH), snap => {
+    localDB = snap.val() || {};
+    render();
+    $('loadingOverlay').style.display = 'none';
+  }, err => {
+    $('loadingOverlay').style.display = 'none';
+    toast('Lỗi kết nối: ' + err.message, 'err');
+  });
+}
 
-            Object.keys(localDB).forEach(key => {
-                const item = localDB[key];
-                total++;
-                if (item.status === 'used') used++;
-                const groupInfo = getMPGroup(item.mp);
+/* ---------- render ---------- */
+function render(){
+  const kw = $('searchInput').value.toLowerCase().trim();
+  const list = $('dataList');
+  const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+  let total = 0, today = 0, shown = 0, html = '';
 
-                if (searchKeyword !== '') {
-                    if (!item.user.toLowerCase().includes(searchKeyword) && !groupInfo.text.toLowerCase().includes(searchKeyword)) return;
-                }
+  const keys = Object.keys(localDB).sort((a,b)=>(localDB[b].createdAt||0)-(localDB[a].createdAt||0));
+  keys.forEach((key, i) => {
+    const it = localDB[key]; total++;
+    if ((it.createdAt||0) >= startOfDay.getTime()) today++;
+    if (kw && ![it.name, it.accId, it.note].some(v => String(v||'').toLowerCase().includes(kw))) return;
+    shown++;
+    const initial = esc((it.name||'?').trim().charAt(0).toUpperCase() || '?');
+    const date = it.createdAt ? new Date(it.createdAt).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+    html += `
+      <div class="card" style="animation-delay:${Math.min(i,10)*30}ms">
+        <div class="card-top">
+          <div class="avatar">${initial}</div>
+          <div style="min-width:0">
+            <div class="card-name">${esc(it.name)}</div>
+            <div class="card-id"><span>ID</span>${esc(it.accId)}</div>
+          </div>
+        </div>
+        ${it.note ? `<div class="note"><b>Lưu ý</b><div>${esc(it.note)}</div></div>` : ''}
+        <div class="card-foot">
+          <div class="time">${date}</div>
+          <div class="acts">
+            <button class="act copy" data-act="copy" data-key="${key}" title="Sao chép"><svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg></button>
+            <button class="act edit" data-act="edit" data-key="${key}" title="Sửa"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
+            <button class="act del" data-act="del" data-key="${key}" title="Xóa"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+          </div>
+        </div>
+      </div>`;
+  });
 
-                const itemHTML = `
-                    <div class="account-item">
-                        <div class="acc-header">
-                            <div>
-                                <div class="acc-user">${item.user}</div>
-                                <div class="acc-pass">Pass: ${item.pass}</div>
-                                <div class="acc-pass" style="color:var(--neon-blue); margin-top:4px;">Giá trị: ${Number(item.mp).toLocaleString()} MP</div>
-                            </div>
-                            <span class="badge ${groupInfo.class}">${groupInfo.text}</span>
-                        </div>
-                        <div class="acc-footer">
-                            <div class="status-toggle ${item.status === 'used' ? 'active' : ''}" onclick="toggleStatus('${key}', '${item.status}')">
-                                <div class="status-dot"></div>
-                                <span>${item.status === 'used' ? 'Đã dùng (Đóng)' : 'Sẵn sàng (Mở)'}</span>
-                            </div>
-                            <div class="action-btns">
-                                <button class="action-btn edit" onclick="startEdit('${key}')">
-                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                                </button>
-                                <button class="action-btn delete" onclick="deleteAcc('${key}')">
-                                    <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                listContainer.insertAdjacentHTML('beforeend', itemHTML);
-            });
+  $('totalCount').textContent = total;
+  $('todayCount').textContent = today;
+  list.innerHTML = shown ? html : `<div class="empty"><big>📭</big>${total ? 'Không tìm thấy kết quả phù hợp.' : 'Kho data trống.<br>Sang tab "Thêm" để tạo data đầu tiên!'}</div>`;
+}
+$('searchInput').addEventListener('input', render);
 
-            document.getElementById('totalAccs').innerText = total;
-            document.getElementById('usedAccs').innerText = used;
-            if (total === 0) listContainer.innerHTML = `<div style="text-align:center; color:var(--text-sub); padding:30px; font-size:14px;">Kho dữ liệu trống. Hãy sang Tab 'Thêm Acc'!</div>`;
-        }
+/* ---------- list actions (event delegation) ---------- */
+$('dataList').addEventListener('click', async e => {
+  const btn = e.target.closest('[data-act]'); if (!btn) return;
+  const key = btn.dataset.key, it = localDB[key]; if (!it) return;
+  if (btn.dataset.act === 'copy'){
+    const txt = `${it.name}|${it.accId}|${it.note||''}`;
+    try { await navigator.clipboard.writeText(txt); toast('Đã sao chép: tên|mã|lưu ý'); }
+    catch { toast('Không thể sao chép','err'); }
+  } else if (btn.dataset.act === 'edit'){
+    startEdit(key);
+  } else if (btn.dataset.act === 'del'){
+    if (await confirmBox(`Xóa "${it.name}" khỏi kho data? Hành động này không thể hoàn tác.`)){
+      remove(ref(db, `${DATA_PATH}/${key}`)).then(()=>toast('Đã xóa data')).catch(e=>toast(e.message,'err'));
+    }
+  }
+});
 
-        window.toggleStatus = function(key, currentStatus) {
-            update(ref(db, `accounts/${key}`), { status: currentStatus === 'used' ? 'active' : 'used' });
-        }
+/* ---------- add / edit ---------- */
+function clearForm(){ ['editKey','fName','fId','fNote'].forEach(id => $(id).value=''); }
+function resetFormUI(){
+  clearForm();
+  $('formTitle').textContent = 'THÊM DATA MỚI';
+  $('btnSave').textContent = 'LƯU DATA';
+  $('btnCancel').style.display = 'none';
+}
+$('btnSave').onclick = () => {
+  const name = $('fName').value.trim(), accId = $('fId').value.trim(), note = $('fNote').value.trim();
+  const editKey = $('editKey').value;
+  if (!name || !accId){ toast('Vui lòng nhập Tên và Mã số acc!','err'); return; }
+  const payload = { name, accId, note };
+  if (editKey){
+    update(ref(db, `${DATA_PATH}/${editKey}`), payload).then(()=>{ resetFormUI(); switchTab('list'); toast('Đã cập nhật'); }).catch(e=>toast(e.message,'err'));
+  } else {
+    payload.createdAt = Date.now();
+    push(ref(db, DATA_PATH), payload).then(()=>{ resetFormUI(); switchTab('list'); toast('Đã thêm data mới'); }).catch(e=>toast(e.message,'err'));
+  }
+};
+$('btnCancel').onclick = () => { resetFormUI(); switchTab('list'); };
+function startEdit(key){
+  const t = localDB[key]; if (!t) return;
+  $('editKey').value = key; $('fName').value = t.name||''; $('fId').value = t.accId||''; $('fNote').value = t.note||'';
+  $('formTitle').textContent = 'CHỈNH SỬA DATA';
+  $('btnSave').textContent = 'CẬP NHẬT NGAY';
+  $('btnCancel').style.display = 'block';
+  switchTab('add');
+}
 
-        window.handleSubmit = function() {
-            const user = document.getElementById('accUser').value.trim();
-            const pass = document.getElementById('accPass').value.trim();
-            const mp = document.getElementById('accMP').value.trim();
-            const editKey = document.getElementById('editKey').value;
+/* ---------- bulk import ---------- */
+$('btnBulk').onclick = async () => {
+  const lines = $('bulkText').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (!lines.length){ toast('Chưa có dòng nào để nhập!','err'); return; }
+  let ok = 0, bad = 0, now = Date.now();
+  const jobs = [];
+  lines.forEach((l, i) => {
+    const [name, accId, ...rest] = l.split('|').map(s=>s.trim());
+    if (!name || !accId){ bad++; return; }
+    jobs.push(push(ref(db, DATA_PATH), { name, accId, note: rest.join('|'), createdAt: now + i }));
+    ok++;
+  });
+  try {
+    await Promise.all(jobs);
+    $('bulkText').value = '';
+    switchTab('list');
+    toast(`Đã nhập ${ok} dòng` + (bad ? ` • bỏ qua ${bad} dòng lỗi` : ''), bad ? 'err' : 'ok');
+  } catch(e){ toast(e.message,'err'); }
+};
 
-            if (!user || !pass || !mp) { alert('Vui lòng nhập đủ thông tin!'); return; }
-            const payload = { user, pass, mp: parseInt(mp) || 0 };
+/* ---------- tabs ---------- */
+const tabNames = ['list','add','bulk'];
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+  $('glider').style.transform = `translateX(${tabNames.indexOf(name) * 100}%)`;
+  if (name === 'add' && !$('editKey').value) $('fName').focus({preventScroll:true});
+}
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => switchTab(b.dataset.tab));
 
-            if (editKey) {
-                update(ref(db, `accounts/${editKey}`), payload).then(() => { cancelEdit(); switchTab('list'); });
-            } else {
-                payload.status = 'active';
-                push(ref(db, 'accounts'), payload).then(() => { clearForm(); switchTab('list'); });
-            }
-        }
-
-        window.startEdit = function(key) {
-            const target = localDB[key]; if (!target) return;
-            document.getElementById('editKey').value = key;
-            document.getElementById('accUser').value = target.user;
-            document.getElementById('accPass').value = target.pass;
-            document.getElementById('accMP').value = target.mp;
-            document.getElementById('formTitle').innerText = "CHỈNH SỬA TÀI KHOẢN";
-            document.getElementById('btnSubmitForm').innerText = "CẬP NHẬT NGAY";
-            document.getElementById('btnCancelEdit').style.display = 'block';
-            switchTab('add');
-        }
-
-        window.cancelEdit = function() {
-            clearForm();
-            document.getElementById('formTitle').innerText = "THÊM TÀI KHOẢN MỚI";
-            document.getElementById('btnSubmitForm').innerText = "LƯU TÀI KHOẢN";
-            document.getElementById('btnCancelEdit').style.display = 'none';
-        }
-
-        window.deleteAcc = function(key) {
-            if (confirm("Bạn chắc chắn muốn xóa tài khoản này chứ?")) remove(ref(db, `accounts/${key}`));
-        }
-
-        function clearForm() {
-            document.getElementById('editKey').value = '';
-            document.getElementById('accUser').value = '';
-            document.getElementById('accPass').value = '';
-            document.getElementById('accMP').value = '';
-        }
-
-        window.switchTab = function(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-            if (tabName === 'list') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('tabList').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tabAdd').classList.add('active');
-            }
-        }
-
-        checkSession();
-    </script>
+/* ---------- boot ---------- */
+if (localStorage.getItem('admin_session_online') === 'true'){
+  $('loginScreen').style.display = 'none';
+  initListener();
+}
+</script>
 </body>
 </html>
