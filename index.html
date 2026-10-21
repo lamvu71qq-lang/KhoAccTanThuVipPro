@@ -56,6 +56,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 </div></div>
 
 <div id="gate" class="ov"><div class="box"><h2 id="gT"></h2><p id="gP"></p><button class="btn s w" id="gOut">Đăng xuất</button></div></div>
+<div id="ann" class="ov" style="z-index:10"><div class="box"><h2>📢 Thông báo từ admin</h2><p id="annTxt" style="white-space:pre-wrap;color:var(--ink);font-size:14px;text-align:left"></p><button class="btn w" id="annOk">Đã đọc</button></div></div>
 <div id="loading" class="ov" style="display:flex"><div class="box"><p style="margin:0">Đang kết nối...</p></div></div>
 <div id="toast"></div>
 
@@ -73,7 +74,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <button class="tab st sp" data-t="topups">Nạp tiền <span id="bTp"></span></button><button class="tab st sp" data-t="tickets">Hỗ trợ <span id="bTk"></span></button>
     <button class="tab st" data-t="kho">Kho acc</button><button class="tab st" data-t="req">Yêu cầu <span id="bRq"></span></button>
     <button class="tab ad" data-t="system">Hệ thống</button>
-    <button class="tab us" data-t="utopup">Nạp tiền</button><button class="tab us" data-t="ubuy">Mua acc</button><button class="tab us" data-t="uva">Tạo VA</button><button class="tab us" data-t="usup">Hỗ trợ</button>
+    <button class="tab us" data-t="utopup">Nạp tiền</button><button class="tab us" data-t="ubuy">Mua acc</button><button class="tab us" data-t="uwd">Rút tiền</button><button class="tab us" data-t="uva">Tạo VA</button><button class="tab us" data-t="usup">Hỗ trợ</button>
   </nav>
 
   <section id="v-acc" class="v st">
@@ -106,6 +107,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <div class="box"><b>Tài khoản nhận tiền (tạo QR cho khách)</b><p class="hint">Mã ngân hàng viết tắt như MB, VCB, ACB, TCB, BIDV, VPB. Khách sẽ thấy QR kèm số tiền và nội dung nạp.</p><input id="bkB" class="in" placeholder="Mã ngân hàng (vd: MB)"><input id="bkA" class="in" placeholder="Số tài khoản"><input id="bkN" class="in" placeholder="Tên chủ tài khoản"><button class="btn" id="bkSave">Lưu tài khoản</button></div>
     <div class="box"><b>Thông tin nạp tiền cho khách</b><br><br><textarea id="depIn" class="in" style="font-family:inherit" placeholder="VD: Vietcombank - 0123456789 - NGUYEN VAN A"></textarea><button class="btn" id="depSave">Lưu thông tin</button></div>
     <div class="box"><b>Liên hệ hỗ trợ (hiện cho khách)</b><p class="hint">Khách thấy ở tab Hỗ trợ. Có thể ghi nhiều dòng, link http(s) bấm được.</p><textarea id="ctIn" class="in" maxlength="500" style="font-family:inherit" placeholder="VD: Zalo: 09xx xxx xxx&#10;Telegram: https://t.me/ten_admin"></textarea><button class="btn" id="ctSave">Lưu liên hệ</button></div>
+    <div class="box"><b>Thông báo gửi khách</b><p class="hint">Khách đăng nhập sẽ thấy khung này và phải bấm "Đã đọc" mới dùng tiếp được. Gửi nội dung mới thì khách sẽ phải đọc lại.</p><textarea id="anIn" class="in" maxlength="600" style="font-family:inherit" placeholder="Nội dung thông báo..."></textarea><div class="row"><button class="btn r" id="anDel">Gỡ thông báo</button><button class="btn" id="anSend">Gửi thông báo</button></div></div>
     <div class="box"><b>Sao lưu dữ liệu</b><p class="hint">Sao lưu danh sách acc (không gồm người dùng, số dư).</p><div class="row"><button class="btn s" id="bkExp">Sao lưu JSON</button><button class="btn s" id="bkImp">Khôi phục JSON</button></div><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
   </section>
 
@@ -143,7 +145,8 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <div class="box"><b>Rút tiền từ ví chính</b><p class="hint">Tối thiểu 10.000đ. Tiền bị trừ ngay khi gửi yêu cầu và chờ admin chuyển khoản. Nếu bị từ chối, tiền được hoàn lại.</p><input id="wdAmt" type="number" class="in" placeholder="Số tiền muốn rút (VND)"><button class="btn w" id="wdGo">Gửi yêu cầu rút</button></div>
     <div id="myWd" class="v on"></div>
   </section>
-  <section id="v-uva" class="v us"><div class="box"><b>Tài khoản ảo (VA)</b><br><br><div id="vaBox"></div></div></section>
+  <section id="v-uva" class="v us"><div class="box"><b>Tài khoản ảo (VA)</b><br><br><div id="vaBox"></div></div>
+    <div class="box" id="vaTop" style="display:none"><b>Nạp tiền qua VA</b><p class="hint">Chuyển tiền vào VA của bạn rồi tải ảnh bill lên để admin xác nhận và cộng vào ví chính.</p><input id="vtAmt" type="number" class="in" placeholder="Số tiền đã chuyển (tối thiểu 20.000đ)"><label class="hint">Ảnh bill chuyển khoản (bắt buộc):</label><input id="vtFile" type="file" accept="image/*" class="in"><img id="vtPrev" alt="" style="display:none;max-width:100%;border-radius:10px;margin-bottom:8px"><button class="btn w" id="vtGo">Gửi xác nhận</button></div></section>
 </div>
 
 <script type="module">
@@ -282,6 +285,7 @@ function startStaff() {
   onValue(query(ref(db, 'tickets'), limitToLast(200)), s => { tkDB = s.val() || {}; renderAll(); queue(); }, () => {});
   onValue(ref(db, 'public/depositInfo'), s => { if (document.activeElement !== $('depIn')) $('depIn').value = s.val() || ''; }, () => {});
   onValue(ref(db, 'public/contact'), s => { if (document.activeElement !== $('ctIn')) $('ctIn').value = s.val() || ''; }, () => {});
+  onValue(ref(db, 'public/announce'), s => { const v = s.val(); if (document.activeElement !== $('anIn')) $('anIn').value = v && v.text || ''; }, () => {});
   onValue(ref(db, 'public/bank'), s => { const b = s.val() || {}; if (!['bkB', 'bkA', 'bkN'].includes(document.activeElement.id)) { $('bkB').value = b.bank || ''; $('bkA').value = b.acc || ''; $('bkN').value = b.name || ''; } }, () => {});
 }
 function startCustomer() {
@@ -289,6 +293,7 @@ function startCustomer() {
   onValue(query(ref(db, 'topups'), orderByChild('uid'), equalTo(me.uid)), s => { topDB = s.val() || {}; renderMine(); }, () => {});
   onValue(query(ref(db, 'tickets'), orderByChild('uid'), equalTo(me.uid)), s => { tkDB = s.val() || {}; renderMine(); }, () => {});
   onValue(ref(db, 'public/depositInfo'), s => { const v = s.val(); $('depInfo').style.display = v ? '' : 'none'; $('depInfo').textContent = v || ''; }, () => {});
+  onValue(ref(db, 'public/announce'), s => { annCur = s.val(); showAnn(); }, () => {});
   onValue(ref(db, 'public/contact'), s => { const v = s.val(); $('ctBox').style.display = v ? '' : 'none'; $('ctTxt').innerHTML = esc(v || '').replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">$1</a>'); }, () => {});
   onValue(ref(db, 'public/bank'), s => { bankCfg = s.val(); renderQR(); }, () => {});
 }
@@ -520,6 +525,23 @@ $('utFile').onchange = async e => {
   const f = e.target.files[0]; billData = null; $('utPrev').style.display = 'none'; if (!f) return;
   try { billData = await shrink(f); $('utPrev').src = billData; $('utPrev').style.display = ''; } catch { toast('Không đọc được ảnh, hãy chọn ảnh khác', 1); }
 };
+let vaBill = null;
+$('vtFile').onchange = async e => {
+  const f = e.target.files[0]; vaBill = null; $('vtPrev').style.display = 'none'; if (!f) return;
+  try { vaBill = await shrink(f); $('vtPrev').src = vaBill; $('vtPrev').style.display = ''; } catch { toast('Không đọc được ảnh, hãy chọn ảnh khác', 1); }
+};
+$('vtGo').onclick = async () => {
+  const v = vaDB[me.uid]; if (!v || v.status !== 'done') return toast('Bạn chưa có VA', 1);
+  const amount = Math.round(Number($('vtAmt').value)); if (amount < MIN_TOPUP) return toast('Nạp tối thiểu 20.000đ', 1); if (!okAmt(amount)) return toast('Số tiền từ 20.000đ đến 100.000.000đ', 1);
+  if (!vaBill) return toast('Vui lòng tải ảnh bill chuyển khoản', 1);
+  $('vtGo').disabled = true;
+  try {
+    const id = push(ref(db, 'topups')).key;
+    await update(ref(db), { ['topups/' + id]: { uid: me.uid, username: me.username, amount, note: `Nạp qua VA ${v.bank} ${v.number}`, via: 'va', status: 'pending', createdAt: Date.now(), notified: false, hasBill: true }, ['bills/' + id]: vaBill });
+    ping('topups', id); $('vtAmt').value = ''; $('vtFile').value = ''; $('vtPrev').style.display = 'none'; vaBill = null; toast('Đã gửi bill, vui lòng chờ admin xác nhận');
+  } catch (e) { toast('Không gửi được: ' + e.message, 1); }
+  $('vtGo').disabled = false;
+};
 $('utGo').onclick = async () => {
   const amount = Math.round(Number($('utAmt').value)); if (amount < MIN_TOPUP) return toast('Nạp tối thiểu 20.000đ', 1); if (!okAmt(amount)) return toast('Số tiền từ 20.000đ đến 100.000.000đ', 1);
   if (!billData) return toast('Vui lòng tải ảnh bill chuyển khoản', 1);
@@ -590,6 +612,7 @@ function renderCust() {
   $('mySell').innerHTML = lst(sellDB, t => `<div class="card"><div class="row"><div class="t">${esc(t.note)}<small>${fd(t.createdAt)}${t.status === 'approved' ? ' · +' + fmt(t.amount) : ''}</small></div>${SS[t.status] || ''}</div></div>`) || '<div class="empty">Chưa gửi cầu thủ nào.</div>';
   $('myWd').innerHTML = lst(wdDB, t => `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${t.status === 'rejected' ? '<span class="pill r">Từ chối · đã hoàn tiền</span>' : t.status === 'done' ? SS.done : '<span class="pill a">Chờ admin chuyển</span>'}</div></div>`) || '<div class="empty">Chưa có yêu cầu rút tiền.</div>';
   const v = vaDB[me.uid];
+  $('vaTop').style.display = v && v.status === 'done' ? '' : 'none';
   $('vaBox').innerHTML = !v ? '<select id="vaBank" class="in"><option>MSB</option><option>BIDV</option></select><button class="btn w" data-a="vago">Yêu cầu tạo VA</button>'
     : v.status === 'done' ? `<button class="fld" data-a="cpv" data-v="${esc(v.number)}"><span>${esc(v.bank)} · STK</span><span>${esc(v.number)}</span></button><div class="msg">Chủ TK: ${esc(v.name || '')}\n(bấm số TK để sao chép)</div>`
     : `<div class="msg" style="margin:0">Đã gửi yêu cầu tạo VA ${esc(v.bank)}, vui lòng chờ admin.</div>`;
@@ -744,6 +767,16 @@ $('tgTest').onclick = async () => {
   toast(`Bot thông báo: ${a ? 'OK' : 'lỗi'} · Bot acc + data: ${b ? 'OK' : 'lỗi'}${c.bankToken ? ' · Bot bank: ' + (k ? 'OK' : 'lỗi') : ''}`, !(a && b && k));
 };
 $('bkSave').onclick = () => { const bank = $('bkB').value.trim().toUpperCase(), acc = $('bkA').value.trim(), name = $('bkN').value.trim(); if (!bank || !acc) return toast('Nhập mã ngân hàng và số tài khoản', 1); set(ref(db, 'public/bank'), { bank, acc, name }).then(() => toast('Đã lưu tài khoản nhận tiền')).catch(e => toast(e.message, 1)); };
+let annCur = null;
+const annKey = () => 'ann_' + (me ? me.uid : '');
+function showAnn() {
+  let seen = null; try { seen = localStorage.getItem(annKey()); } catch {}
+  const on = !staff && annCur && annCur.text && String(annCur.id) !== seen;
+  $('ann').style.display = on ? 'flex' : 'none'; if (on) $('annTxt').textContent = annCur.text;
+}
+$('annOk').onclick = () => { try { localStorage.setItem(annKey(), String(annCur && annCur.id)); } catch {} showAnn(); };
+$('anSend').onclick = () => { const t = $('anIn').value.trim(); if (!t) return toast('Nhập nội dung thông báo', 1); set(ref(db, 'public/announce'), { id: Date.now(), text: t.slice(0, 600), by: me.username }).then(() => toast('Đã gửi thông báo cho khách')).catch(e => toast(e.message, 1)); };
+$('anDel').onclick = () => { if (confirm('Gỡ thông báo hiện tại?')) remove(ref(db, 'public/announce')).then(() => { $('anIn').value = ''; toast('Đã gỡ thông báo'); }).catch(e => toast(e.message, 1)); };
 $('ctSave').onclick = () => set(ref(db, 'public/contact'), $('ctIn').value.trim().slice(0, 500)).then(() => toast('Đã lưu thông tin liên hệ')).catch(e => toast(e.message, 1));
 $('depSave').onclick = () => set(ref(db, 'public/depositInfo'), $('depIn').value.trim().slice(0, 600)).then(() => toast('Đã lưu thông tin nạp tiền')).catch(e => toast(e.message, 1));
 
