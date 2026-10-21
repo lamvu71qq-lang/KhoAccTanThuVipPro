@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Master Admin - Kho QLI FC</title>
 <style>
-:root{--bg:#f4f3ef;--c:#fff;--ink:#16181d;--mut:#8a90a0;--line:#e7e5df;--soft:#f0eee8;--ac:#2d5be3;--g:#0f8a5f;--r:#d6403a;--a:#b7791f}
+:root{--bg:#f4f3ef;--c:#fff;--ink:#16181d;--mut:#8a90a0;--line:#e7e5df;--soft:#f0eee8;--ac:#2d5be3;--g:#0f8a5f;--r:#d6403a;--a:#b7791f;--rev:#16181d;--sub:#4b5160;--gs:#e2f5ec;--as:#fbf0dc;--rs:#fdeae9;color-scheme:light}
+:root[data-theme=dark]{--bg:#0f1115;--c:#1a1d24;--ink:#f1f2f5;--mut:#8f96a6;--line:#2b2f3a;--soft:#242832;--ac:#6b8cff;--g:#1f9d70;--r:#e5534b;--a:#e0a64a;--rev:#262a35;--sub:#b4b9c6;--gs:#12372b;--as:#3a2f14;--rs:#3d1b1a;color-scheme:dark}
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
 body{background:var(--bg);color:var(--ink);padding:max(16px,env(safe-area-inset-top)) 16px 48px;display:flex;justify-content:center}
 button{cursor:pointer;border:0;background:none;color:inherit;font:inherit}
@@ -13,33 +14,34 @@ body:not(.is-staff) .st{display:none!important}body:not(.is-admin) .ad{display:n
 #app{width:100%;max-width:560px;display:none;flex-direction:column;gap:12px}
 header{display:flex;justify-content:space-between;align-items:center}
 header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
-.rev{background:var(--ink);color:#fff;border-radius:18px;padding:18px}
+.rev{background:var(--rev);color:#fff;border-radius:18px;padding:18px}
 .rev small{color:#a9afbd;font-size:12px}.rev .t{font-size:32px;font-weight:800;margin:4px 0 8px}
 .rev .g{display:flex;gap:16px;font-size:12.5px;color:#a9afbd}.rev b{color:#fff}
 .tabs{display:flex;gap:4px;overflow-x:auto;background:var(--soft);padding:4px;border-radius:12px}
-.tab{padding:9px 12px;border-radius:9px;white-space:nowrap;font-size:13px;font-weight:600;color:#4b5160}.tab.on{background:#fff;color:var(--ink)}
+.tab{padding:9px 12px;border-radius:9px;white-space:nowrap;font-size:13px;font-weight:600;color:var(--sub)}.tab.on{background:var(--c);color:var(--ink)}
 .v{display:none;flex-direction:column;gap:10px}.v.on{display:flex}
-.in{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff;color:var(--ink);margin-bottom:8px;outline:none}
+.in{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:var(--c);color:var(--ink);margin-bottom:8px;outline:none}
 .in:focus{border-color:var(--ac)}textarea.in{min-height:100px;font-family:ui-monospace,monospace;font-size:13px}
-.btn{padding:11px 14px;border-radius:10px;background:var(--ink);color:#fff;font-weight:700;font-size:13px}
-.btn.w{width:100%}.btn.s{background:var(--soft);color:var(--ink)}.btn.g{background:var(--g)}.btn.r{background:var(--r)}.btn:disabled{opacity:.5}
+.btn{padding:11px 14px;border-radius:10px;background:var(--ink);color:var(--c);font-weight:700;font-size:13px}
+.btn.w{width:100%}.btn.s{background:var(--soft);color:var(--ink)}.btn.g{background:var(--g);color:#fff}.btn.r{background:var(--r);color:#fff}.btn:disabled{opacity:.5}
 .box,.card{background:var(--c);border:1px solid var(--line);border-radius:14px;padding:14px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .card .t{font-weight:700;font-size:15px;word-break:break-word}.card small{display:block;color:var(--mut);font-size:11.5px;margin-top:2px}
 .pill{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--soft)}
-.pill.g{background:#e2f5ec;color:var(--g)}.pill.a{background:#fbf0dc;color:var(--a)}.pill.r{background:#fdeae9;color:var(--r)}
+.pill.g{background:var(--gs);color:var(--g)}.pill.a{background:var(--as);color:var(--a)}.pill.r{background:var(--rs);color:var(--r)}
 .fld{display:flex;justify-content:space-between;gap:10px;width:100%;margin-top:6px;padding:9px 11px;border-radius:9px;background:var(--soft);font-size:13px}
 .fld span:last-child{font-family:ui-monospace,monospace;word-break:break-all;text-align:right}
 .foot{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.acts{display:flex;gap:6px;flex-wrap:wrap}
-.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:600}.chip.on{background:var(--ink);color:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--c);font-size:12.5px;font-weight:600}.chip.on{background:var(--ink);color:var(--c)}
 .msg{margin-top:8px;padding:9px 11px;background:var(--soft);border-radius:9px;font-size:13px;white-space:pre-wrap;word-break:break-word}
 .empty{text-align:center;color:var(--mut);padding:28px;border:1px dashed var(--line);border-radius:14px;font-size:14px}
 .hint{font-size:12.5px;color:var(--mut);line-height:1.5;margin-bottom:8px}.hint code{background:var(--soft);padding:1px 5px;border-radius:5px}
 .ov{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;z-index:9}
 .ov .box{width:100%;max-width:360px;text-align:center}.ov h2{margin-bottom:6px}.ov p{color:var(--mut);font-size:13px;margin-bottom:14px}
+.tg{font-size:16px;padding:8px 11px}
 .lnk{color:var(--ac);font-size:13px;font-weight:600;margin-top:10px}
 #toast{position:fixed;left:0;right:0;bottom:20px;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:99;pointer-events:none}
-#toast div{background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;max-width:90%}#toast .e{background:var(--r)}
+#toast div{background:var(--ink);color:var(--c);padding:10px 16px;border-radius:10px;font-size:13.5px;font-weight:600;max-width:90%}#toast .e{background:var(--r);color:#fff}
 </style>
 </head>
 <body>
@@ -50,7 +52,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
   <input id="aPass" type="password" class="in" placeholder="Mật khẩu (tối thiểu 6 ký tự)" autocomplete="current-password">
   <input id="aPass2" type="password" class="in" placeholder="Nhập lại mật khẩu" style="display:none">
   <button id="aGo" class="btn w">Đăng nhập</button>
-  <button id="aSwitch" class="lnk">Chưa có tài khoản? Tạo tài khoản</button>
+  <button class="btn s tg" data-theme-toggle title="Đổi nền sáng/tối">🌓</button><br><button id="aSwitch" class="lnk">Chưa có tài khoản? Tạo tài khoản</button>
 </div></div>
 
 <div id="gate" class="ov"><div class="box"><h2 id="gT"></h2><p id="gP"></p><button class="btn s w" id="gOut">Đăng xuất</button></div></div>
@@ -59,7 +61,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 
 <div id="app">
   <header><div><h1>Master Admin</h1><small>Kho QLI FC by GBAO</small></div>
-    <div class="row"><div style="text-align:right"><b id="hUser"></b><br><small id="hRole"></small></div><button class="btn s" id="btnOut">Thoát</button></div></header>
+    <div class="row"><button class="btn s tg" data-theme-toggle title="Đổi nền sáng/tối">🌓</button><div style="text-align:right"><b id="hUser"></b><br><small id="hRole"></small></div><button class="btn s" id="btnOut">Thoát</button></div></header>
 
   <section class="rev st"><small>TỔNG DOANH THU BÁN HÀNG</small><div class="t" id="rTotal">0đ</div>
     <div class="g"><span>Acc bán: <b id="rAcc">0</b></span><span>Data lấy: <b id="rData">0</b></span><span>Acc còn: <b id="sAcc">0</b></span><span>Data còn: <b id="sData">0</b></span></div></section>
@@ -552,6 +554,15 @@ $('bkFile').onchange = async e => {
     toast(`Khôi phục ${ok} · trùng ${dup} · lỗi ${err}`, dup || err);
   } catch (x) { toast('Không đọc được file: ' + x.message, 1); }
 };
+
+/* ---------- nền sáng / tối ---------- */
+let theme = null; try { theme = localStorage.getItem('theme'); } catch {}
+if (theme !== 'dark' && theme !== 'light') theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.dataset.theme = theme;
+document.querySelectorAll('[data-theme-toggle]').forEach(b => b.onclick = () => {
+  theme = theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('theme', theme); } catch {}
+});
 
 setType('acc'); setMode('login');
 </script>
