@@ -10,7 +10,7 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
 body{background:var(--bg);color:var(--ink);padding:max(16px,env(safe-area-inset-top)) 16px 48px;display:flex;justify-content:center}
 button{cursor:pointer;border:0;background:none;color:inherit;font:inherit}
-body:not(.is-staff) .st{display:none!important}body:not(.is-admin) .ad{display:none!important}body:not(.is-user) .us{display:none!important}
+body:not(.is-staff) .st{display:none!important}body:not(.is-admin) .ad{display:none!important}body:not(.is-user) .us{display:none!important}body.is-support .st:not(.sp){display:none!important}
 #app{width:100%;max-width:560px;display:none;flex-direction:column;gap:12px}
 header{display:flex;justify-content:space-between;align-items:center}
 header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
@@ -47,7 +47,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 <body>
 
 <div id="auth" class="ov"><div class="box">
-  <h2>Master Admin</h2><p id="aSub">Đăng nhập để vào hệ thống</p>
+  <h2>Bủ STORE</h2><p id="aSub">Đăng nhập để vào hệ thống</p>
   <input id="aUser" class="in" placeholder="Tên đăng nhập (vd: gbao01)" autocapitalize="none" autocomplete="username">
   <input id="aPass" type="password" class="in" placeholder="Mật khẩu (tối thiểu 6 ký tự)" autocomplete="current-password">
   <input id="aPass2" type="password" class="in" placeholder="Nhập lại mật khẩu" style="display:none">
@@ -60,19 +60,20 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 <div id="toast"></div>
 
 <div id="app">
-  <header><div><h1>Bủ STORE</h1><small>Kho Acc Tân Thủ Xịn Xò</small></div>
+  <header><div><h1>Bủ STORE</h1><small>Master Admin</small></div>
     <div class="row"><button class="btn s tg" data-theme-toggle title="Đổi nền sáng/tối">🌓</button><div style="text-align:right"><b id="hUser"></b><br><small id="hRole"></small></div><button class="btn s" id="btnOut">Thoát</button></div></header>
 
-  <section class="rev st"><small>TỔNG DOANH THU BÁN HÀNG</small><div class="t" id="rTotal">0đ</div>
+  <section class="rev ad"><small>TỔNG DOANH THU BÁN HÀNG</small><div class="t" id="rTotal">0đ</div>
     <div class="g"><span>Acc đã bán: <b id="rAcc">0</b></span><span>Acc còn: <b id="sAcc">0</b></span></div></section>
   <section class="rev us"><small>SỐ DƯ CỦA BẠN</small><div class="t" id="bal">0đ</div><div class="g">Acc 20.000đ</div></section>
 
   <nav class="tabs">
     <button class="tab st" data-t="acc">Bán acc</button>
     <button class="tab st" data-t="add">Thêm mới</button><button class="tab st" data-t="users">Khách hàng</button>
-    <button class="tab st" data-t="topups">Nạp tiền <span id="bTp"></span></button><button class="tab st" data-t="tickets">Hỗ trợ <span id="bTk"></span></button>
+    <button class="tab st sp" data-t="topups">Nạp tiền <span id="bTp"></span></button><button class="tab st sp" data-t="tickets">Hỗ trợ <span id="bTk"></span></button>
+    <button class="tab st" data-t="kho">Kho acc</button><button class="tab st" data-t="req">Yêu cầu <span id="bRq"></span></button>
     <button class="tab ad" data-t="system">Hệ thống</button>
-    <button class="tab us" data-t="utopup">Nạp tiền</button><button class="tab us" data-t="usup">Hỗ trợ</button>
+    <button class="tab us" data-t="utopup">Nạp tiền</button><button class="tab us" data-t="ubuy">Mua acc</button><button class="tab us" data-t="usup">Hỗ trợ</button>
   </nav>
 
   <section id="v-acc" class="v st">
@@ -89,13 +90,13 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 
   <section id="v-users" class="v st"><p class="hint">Tài khoản mới ở trạng thái Chờ duyệt. Admin hỗ trợ được duyệt; chỉ Admin khóa/mở khóa và đổi quyền.</p><div id="userList" class="v on"></div></section>
 
-  <section id="v-topups" class="v st">
+  <section id="v-topups" class="v st sp">
     <div class="box"><b>Nạp tiền cho khách</b><br><br><select id="tpUser" class="in"></select><input id="tpAmt" type="number" class="in" placeholder="Số tiền (VND)"><input id="tpNote" class="in" placeholder="Ghi chú (không bắt buộc)"><button class="btn w" id="tpAdd">Cộng số dư</button></div>
     <div class="box ad"><b>Trừ tiền khách</b><br><br><select id="dcUser" class="in"></select><input id="dcAmt" type="number" class="in" placeholder="Số tiền trừ (VND)"><input id="dcNote" class="in" placeholder="Lý do trừ tiền (bắt buộc)" maxlength="100"><button class="btn r w" id="dcGo">Trừ số dư</button></div>
     <div id="topupList" class="v on"></div>
   </section>
 
-  <section id="v-tickets" class="v st"><div id="ticketList" class="v on"></div></section>
+  <section id="v-tickets" class="v st sp"><div id="ticketList" class="v on"></div></section>
 
   <section id="v-system" class="v ad">
     <div class="box"><b>Telegram</b><p class="hint">Bot thông báo: thành viên mới, báo lỗi. Bot acc + data: bán acc, nạp tiền. Bot bank: đơn nạp mới kèm ảnh bill.</p>
@@ -109,7 +110,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 
   <section id="v-utopup" class="v us">
     <div class="box"><b>Nạp tiền</b><br><br>
-      <input id="utAmt" type="number" class="in" placeholder="Số tiền muốn nạp (VND)">
+      <input id="utAmt" type="number" class="in" placeholder="Số tiền muốn nạp (tối thiểu 20.000đ)">
       <div id="qrBox" style="display:none;text-align:center;margin-bottom:8px"><img id="qrImg" alt="QR chuyển khoản" style="width:100%;max-width:300px;border-radius:12px;background:#fff"><div class="msg" id="bankTxt" style="text-align:left"></div></div>
       <div class="msg" id="depInfo" style="display:none;margin:0 0 8px"></div>
       <div class="msg" id="memoBox" style="margin:0 0 8px;cursor:pointer"></div>
@@ -122,6 +123,25 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <div class="box"><b>Báo lỗi / cần hỗ trợ</b><br><br><select id="usType" class="in"><option value="error">Báo lỗi</option><option value="support">Cần hỗ trợ</option></select><textarea id="usMsg" class="in" maxlength="500" style="font-family:inherit" placeholder="Mô tả vấn đề..."></textarea><button class="btn w" id="usGo">Gửi cho admin</button></div>
     <div id="myTk" class="v on"></div>
   </section>
+  <section id="v-kho" class="v st">
+    <div class="box ad"><b>Lưu ý của kho</b><br><br><select id="khoSel" class="in"></select><textarea id="khoNote" class="in" style="font-family:inherit" maxlength="1000" placeholder="Lưu ý hiển thị cho khách khi vào kho này..."></textarea><button class="btn" id="khoSave">Lưu lưu ý</button></div>
+    <div class="box"><b>Up thêm acc vào kho</b><br><br><select id="addKho" class="in"></select><input id="saTk" class="in" placeholder="Tài khoản"><input id="saMk" class="in" placeholder="Mật khẩu"><input id="saName" class="in" placeholder="Tên acc (không bắt buộc)"><input id="saPrice" type="number" class="in" placeholder="Giá bán (VND)"><input id="saNote" class="in" maxlength="200" placeholder="Lưu ý của acc này (không bắt buộc)"><button class="btn w" id="saGo">Thêm acc</button>
+      <p class="hint" style="margin-top:12px">Nhập nhiều dòng: <code>tk|mk|giá|tên|lưu ý</code> (tên và lưu ý có thể bỏ trống)</p><textarea id="saBulk" class="in"></textarea><button class="btn w" id="saBulkGo">Nhập nhiều dòng</button></div>
+    <div class="chips" id="kaChips"></div><div id="kaList" class="v on"></div>
+  </section>
+  <section id="v-req" class="v st"><div id="reqList" class="v on"></div></section>
+
+  <section id="v-ubuy" class="v us"><div class="chips" id="kChips"></div><div class="msg" id="kNote" style="margin:0"></div><div id="kList" class="v on"></div><b>Acc đã mua</b><div id="myAcc" class="v on"></div></section>
+  <section id="v-usell" class="v us">
+    <div class="box"><b>Bán cầu thủ</b><p class="hint">Gửi ảnh cầu thủ đã bán để admin xác nhận. Admin duyệt xong tiền sẽ được cộng vào ví chính.</p><input id="slNote" class="in" maxlength="200" placeholder="Tên cầu thủ / mô tả / giá bán"><input id="slFile" type="file" accept="image/*" class="in"><img id="slPrev" alt="" style="display:none;max-width:100%;border-radius:10px;margin-bottom:8px"><button class="btn w" id="slGo">Gửi xác nhận</button></div>
+    <div id="mySell" class="v on"></div>
+  </section>
+  <section id="v-uwd" class="v us">
+    <div class="box"><b>Thông tin rút tiền</b><p class="hint">Nơi admin sẽ chuyển tiền cho bạn.</p><input id="pyIn" class="in" maxlength="200" placeholder="Ngân hàng - Số tài khoản - Tên chủ tài khoản"><button class="btn" id="pySave">Lưu thông tin</button></div>
+    <div class="box"><b>Rút tiền từ ví chính</b><p class="hint">Tối thiểu 10.000đ. Tiền bị trừ ngay khi gửi yêu cầu và chờ admin chuyển khoản. Nếu bị từ chối, tiền được hoàn lại.</p><input id="wdAmt" type="number" class="in" placeholder="Số tiền muốn rút (VND)"><button class="btn w" id="wdGo">Gửi yêu cầu rút</button></div>
+    <div id="myWd" class="v on"></div>
+  </section>
+  <section id="v-uva" class="v us"><div class="box"><b>Tài khoản ảo (VA)</b><br><br><div id="vaBox"></div></div></section>
 </div>
 
 <script type="module">
@@ -148,6 +168,8 @@ const fmt = n => Number(n || 0).toLocaleString('vi-VN') + 'đ';
 const fd = t => t ? new Date(t).toLocaleString('vi-VN') : '';
 const sorted = o => Object.keys(o).sort((a, b) => (o[b].createdAt || 0) - (o[a].createdAt || 0));
 const toast = (m, e) => { const d = document.createElement('div'); d.textContent = m; if (e) d.className = 'e'; $('toast').appendChild(d); setTimeout(() => d.remove(), 2800); };
+const NOTIFY_URL = 'https://wild-field-eb5b.9t5hd47ytj.workers.dev'; // dán link Cloudflare Worker vào đây (vd: https://ten-worker.workers.dev)
+const ping = async (type, id) => { if (!NOTIFY_URL) return; try { await fetch(NOTIFY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await auth.currentUser.getIdToken() }, body: JSON.stringify({ type, id }) }); } catch {} };
 const copy = (t, m) => navigator.clipboard.writeText(t).then(() => toast(m || 'Đã sao chép'), () => toast('Không sao chép được', 1));
 
 let me, staff = false, admin = false, started = false, mode = 'login', registering = false, tried = false;
@@ -205,7 +227,7 @@ async function doAuth() {
     if (mode === 'register') {
       registering = true;
       const c = await createUserWithEmailAndPassword(auth, user + MAIL, pass);
-      const first = await ensureProfile(c.user); registering = false;
+      const first = await ensureProfile(c.user); registering = false; if (!first) ping('users', c.user.uid);
       toast(first ? 'Đã tạo tài khoản admin đầu tiên' : 'Đã tạo tài khoản, vui lòng chờ admin duyệt');
     } else await signInWithEmailAndPassword(auth, user + MAIL, pass);
   } catch (e) { registering = false; toast(authErr(e), 1); }
@@ -237,16 +259,18 @@ function access() {
   if (started && started !== me.role) return location.reload();
   admin = me.role === 'admin'; staff = admin || me.role === 'support';
   $('gate').style.display = 'none'; $('app').style.display = 'flex';
-  document.body.classList.toggle('is-admin', admin); document.body.classList.toggle('is-staff', staff); document.body.classList.toggle('is-user', !staff);
+  document.body.classList.toggle('is-admin', admin); document.body.classList.toggle('is-staff', staff); document.body.classList.toggle('is-user', !staff); document.body.classList.toggle('is-support', staff && !admin);
   $('bal').textContent = fmt(me.balance);
   if (!staff) renderQR();
-  if (!started) { started = me.role; staff ? startStaff() : startCustomer(); tab(staff ? 'acc' : 'utopup'); }
+  if (!staff && document.activeElement !== $('pyIn')) $('pyIn').value = me.payout || '';
+  if (!started) { started = me.role; staff ? startStaff() : startCustomer(); tab(admin ? 'acc' : staff ? 'topups' : 'ubuy'); }
   renderAll();
 }
 
 /* ---------- realtime ---------- */
 const bad = e => toast('Lỗi dữ liệu: ' + e.message, 1);
 function startStaff() {
+  startStaff2();
   onValue(ref(db, 'accban'), s => { accDB = s.val() || {}; renderAll(); }, bad);
   onValue(ref(db, 'settings/telegram'), s => { tg = s.val(); fillTg(); queue(); }, () => {});
   onValue(ref(db, 'users'), s => { usersDB = s.val() || {}; renderAll(); queue(); }, () => {});
@@ -256,6 +280,7 @@ function startStaff() {
   onValue(ref(db, 'public/bank'), s => { const b = s.val() || {}; if (!['bkB', 'bkA', 'bkN'].includes(document.activeElement.id)) { $('bkB').value = b.bank || ''; $('bkA').value = b.acc || ''; $('bkN').value = b.name || ''; } }, () => {});
 }
 function startCustomer() {
+  startCustomer2();
   onValue(query(ref(db, 'topups'), orderByChild('uid'), equalTo(me.uid)), s => { topDB = s.val() || {}; renderMine(); }, () => {});
   onValue(query(ref(db, 'tickets'), orderByChild('uid'), equalTo(me.uid)), s => { tkDB = s.val() || {}; renderMine(); }, () => {});
   onValue(ref(db, 'public/depositInfo'), s => { const v = s.val(); $('depInfo').style.display = v ? '' : 'none'; $('depInfo').textContent = v || ''; }, () => {});
@@ -272,6 +297,7 @@ async function queue() {
     for (const id in usersDB) { const u = usersDB[id]; if (u.role === 'user' && u.status === 'pending' && !u.notified) jobs.push([`users/${id}/notified`, 'n', `👤 THÀNH VIÊN MỚI\nTên đăng nhập: ${u.username}\nĐang chờ admin duyệt.`]); }
     for (const id in tkDB) { const t = tkDB[id]; if (t.status === 'open' && !t.notified) jobs.push([`tickets/${id}/notified`, 'n', `🆘 ${t.type === 'error' ? 'KHÁCH BÁO LỖI' : 'KHÁCH CẦN HỖ TRỢ'}\nTừ: ${t.username}\n${t.message}`]); }
     for (const id in topDB) { const t = topDB[id]; if (t.status === 'pending' && !t.notified) jobs.push([`topups/${id}/notified`, 'b', `🧾 BẠN CÓ ĐƠN NẠP MỚI, VUI LÒNG XÁC NHẬN\nUser: ${t.username}\nID web: ${String(t.uid).slice(0, 6).toUpperCase()}\nSố tiền: ${fmt(t.amount)}${t.note ? '\nND: ' + t.note : ''}\nẢnh chuyển khoản: ${t.hasBill ? 'có (đính kèm)' : 'không có'}`, t.hasBill ? id : null]); }
+    jobs.push(...extraJobs());
     for (const [p, bot, txt, bid] of jobs) {
       if (retry[p] > Date.now()) continue;
       if (!(await runTransaction(ref(db, p), c => c === true ? undefined : true)).committed) continue;
@@ -350,7 +376,7 @@ function renderMine() {
   $('myTop').innerHTML = Object.keys(topDB).sort((a, b) => (topDB[b].createdAt || 0) - (topDB[a].createdAt || 0)).map(id => { const t = topDB[id]; return `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${t.deduct ? '<span class="pill r">Đã trừ</span>' : TP[t.status] || ''}</div>${t.deduct && t.note ? `<div class="msg">Lý do: ${esc(t.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Chưa có yêu cầu nạp tiền.</div>';
   $('myTk').innerHTML = Object.keys(tkDB).sort((a, b) => (tkDB[b].createdAt || 0) - (tkDB[a].createdAt || 0)).map(id => { const t = tkDB[id]; return `<div class="card"><div class="row"><div class="t">${t.type === 'error' ? 'Báo lỗi' : 'Cần hỗ trợ'}<small>${fd(t.createdAt)}</small></div><span class="pill ${t.status === 'open' ? 'a' : 'g'}">${t.status === 'open' ? 'Đang xử lý' : 'Đã xử lý'}</span></div><div class="msg">${esc(t.message)}</div></div>`; }).join('') || '<div class="empty">Chưa gửi yêu cầu nào.</div>';
 }
-function renderAll() { if (staff) { renderStats(); renderAcc(); renderUsers(); renderTopups(); renderTickets(); } else renderMine(); }
+function renderAll() { if (staff) { renderStats(); renderAcc(); renderUsers(); renderTopups(); renderTickets(); renderKho(); renderReq(); } else { renderMine(); renderCust(); } }
 
 /* ---------- bộ lọc & tab ---------- */
 $('accQ').oninput = renderAcc;
@@ -412,6 +438,7 @@ $('userList').onchange = e => {
 
 /* ---------- nạp tiền ---------- */
 const okAmt = a => a >= 1000 && a <= 100000000;
+const MIN_TOPUP = 20000;
 $('tpAdd').onclick = async () => {
   const uid = $('tpUser').value, amount = Math.round(Number($('tpAmt').value)), note = $('tpNote').value.trim();
   if (!uid) return toast('Chọn khách hàng', 1); if (!okAmt(amount)) return toast('Số tiền từ 1.000đ đến 100.000.000đ', 1);
@@ -467,7 +494,7 @@ function renderQR() {
   $('memoBox').textContent = 'Nội dung chuyển khoản (bắt buộc ghi đúng):\n' + memo() + '\n(bấm để sao chép)';
   const b = bankCfg, ok = b && b.bank && b.acc; $('qrBox').style.display = ok ? '' : 'none'; if (!ok) return;
   const amt = Math.round(Number($('utAmt').value));
-  $('qrImg').src = `https://img.vietqr.io/image/${encodeURIComponent(b.bank)}-${encodeURIComponent(b.acc)}-compact2.png?${okAmt(amt) ? 'amount=' + amt + '&' : ''}addInfo=${encodeURIComponent(memo())}&accountName=${encodeURIComponent(b.name || '')}`;
+  $('qrImg').src = `https://img.vietqr.io/image/${encodeURIComponent(b.bank)}-${encodeURIComponent(b.acc)}-compact2.png?${okAmt(amt) && amt >= MIN_TOPUP ? 'amount=' + amt + '&' : ''}addInfo=${encodeURIComponent(memo())}&accountName=${encodeURIComponent(b.name || '')}`;
   $('bankTxt').textContent = `Ngân hàng: ${b.bank}\nSố TK: ${b.acc}\nChủ TK: ${b.name || ''}`;
 }
 $('memoBox').onclick = () => me && copy(memo());
@@ -488,13 +515,13 @@ $('utFile').onchange = async e => {
   try { billData = await shrink(f); $('utPrev').src = billData; $('utPrev').style.display = ''; } catch { toast('Không đọc được ảnh, hãy chọn ảnh khác', 1); }
 };
 $('utGo').onclick = async () => {
-  const amount = Math.round(Number($('utAmt').value)); if (!okAmt(amount)) return toast('Số tiền từ 1.000đ đến 100.000.000đ', 1);
+  const amount = Math.round(Number($('utAmt').value)); if (amount < MIN_TOPUP) return toast('Nạp tối thiểu 20.000đ', 1); if (!okAmt(amount)) return toast('Số tiền từ 20.000đ đến 100.000.000đ', 1);
   if (!billData) return toast('Vui lòng tải ảnh bill chuyển khoản', 1);
   $('utGo').disabled = true;
   try {
     const id = push(ref(db, 'topups')).key;
     await update(ref(db), { ['topups/' + id]: { uid: me.uid, username: me.username, amount, note: memo(), status: 'pending', createdAt: Date.now(), notified: false, hasBill: true }, ['bills/' + id]: billData });
-    $('utAmt').value = ''; $('utFile').value = ''; $('utPrev').style.display = 'none'; billData = null; renderQR(); toast('Đã gửi yêu cầu, vui lòng chờ admin duyệt');
+    ping('topups', id); $('utAmt').value = ''; $('utFile').value = ''; $('utPrev').style.display = 'none'; billData = null; renderQR(); toast('Đã gửi yêu cầu, vui lòng chờ admin duyệt');
   } catch (e) { toast('Không gửi được: ' + e.message, 1); }
   $('utGo').disabled = false;
 };
@@ -503,13 +530,170 @@ $('utGo').onclick = async () => {
 $('usGo').onclick = async () => {
   const message = $('usMsg').value.trim(); if (!message) return toast('Vui lòng nhập nội dung', 1);
   $('usGo').disabled = true;
-  try { await push(ref(db, 'tickets'), { uid: me.uid, username: me.username, type: $('usType').value, message: message.slice(0, 500), status: 'open', createdAt: Date.now(), notified: false }); $('usMsg').value = ''; toast('Đã gửi cho admin'); }
+  try { const tr = await push(ref(db, 'tickets'), { uid: me.uid, username: me.username, type: $('usType').value, message: message.slice(0, 500), status: 'open', createdAt: Date.now(), notified: false }); ping('tickets', tr.key); $('usMsg').value = ''; toast('Đã gửi cho admin'); }
   catch (e) { toast('Không gửi được: ' + e.message, 1); }
   $('usGo').disabled = false;
 };
 $('ticketList').onclick = e => {
   const b = e.target.closest('[data-a=tkdone]'); if (!b || !staff) return;
   update(ref(db, `tickets/${b.dataset.k}`), { status: 'done', handledBy: me.username, handledAt: Date.now() }).then(() => toast('Đã đánh dấu xử lý')).catch(x => toast(x.message, 1));
+};
+
+/* ---------- kho acc / bán cầu thủ / rút tiền / VA ---------- */
+const KHO = { okvip: 'Kho Acc OkVip', abcvip: 'Kho Acc AbcVip', nohu: 'Kho Acc NOHU' }, MINWD = 10000;
+let shopDB = {}, sellDB = {}, wdDB = {}, vaDB = {}, khoNotes = {}, secCache = {}, kho = 'okvip', kaf = 'okvip', slData = null;
+const U6 = id => String(id).slice(0, 6).toUpperCase();
+const nm = k => KHO[k] || k;
+const kchips = (el, cur) => { $(el).innerHTML = Object.keys(KHO).map(k => `<button class="chip ${cur === k ? 'on' : ''}" data-f="${k}">${nm(k).replace('Kho Acc ', '')}</button>`).join(''); };
+['khoSel', 'addKho'].forEach(i => $(i).innerHTML = Object.keys(KHO).map(k => `<option value="${k}">${KHO[k]}</option>`).join(''));
+const SS = { pending: '<span class="pill a">Chờ xác nhận</span>', approved: '<span class="pill g">Đã cộng</span>', rejected: '<span class="pill r">Từ chối</span>', done: '<span class="pill g">Đã chuyển</span>' };
+const lst = (o, f) => Object.keys(o).sort((a, b) => (o[b].createdAt || 0) - (o[a].createdAt || 0)).map(k => f(o[k], k)).join('');
+const claim = (path, from, to) => runTransaction(ref(db, path + '/status'), c => c === from ? to : undefined).then(r => r.committed);
+
+function startStaff2() {
+  onValue(ref(db, 'shopAcc'), s => { shopDB = s.val() || {}; renderAll(); }, bad);
+  onValue(ref(db, 'public/khoNotes'), s => { khoNotes = s.val() || {}; if (document.activeElement !== $('khoNote')) $('khoNote').value = khoNotes[$('khoSel').value] || ''; }, () => {});
+  onValue(query(ref(db, 'sells'), limitToLast(200)), s => { sellDB = s.val() || {}; renderAll(); queue(); }, () => {});
+  onValue(query(ref(db, 'withdraws'), limitToLast(200)), s => { wdDB = s.val() || {}; renderAll(); queue(); }, () => {});
+  onValue(ref(db, 'vas'), s => { vaDB = s.val() || {}; renderAll(); queue(); }, () => {});
+}
+function startCustomer2() {
+  onValue(ref(db, 'shopAcc'), s => { shopDB = s.val() || {}; renderCust(); }, bad);
+  onValue(ref(db, 'public/khoNotes'), s => { khoNotes = s.val() || {}; renderCust(); }, () => {});
+  onValue(query(ref(db, 'sells'), orderByChild('uid'), equalTo(me.uid)), s => { sellDB = s.val() || {}; renderCust(); }, () => {});
+  onValue(query(ref(db, 'withdraws'), orderByChild('uid'), equalTo(me.uid)), s => { wdDB = s.val() || {}; renderCust(); }, () => {});
+  onValue(ref(db, 'vas/' + me.uid), s => { vaDB = s.val() ? { [me.uid]: s.val() } : {}; renderCust(); }, () => {});
+}
+function extraJobs() {
+  const j = [], who = t => `User: ${t.username}\nID web: ${U6(t.uid)}`;
+  for (const id in sellDB) { const t = sellDB[id]; if (t.status === 'pending' && !t.notified) j.push([`sells/${id}/notified`, 'b', `🏏 USER BÁN CẦU THỦ, VUI LÒNG XÁC NHẬN\n${who(t)}\nGhi chú: ${t.note}`, t.hasBill ? id : null]); }
+  for (const id in wdDB) { const t = wdDB[id]; if (t.status === 'pending' && !t.notified) j.push([`withdraws/${id}/notified`, 'b', `💸 YÊU CẦU RÚT TIỀN\n${who(t)}\nSố tiền: ${fmt(t.amount)}\nNhận về: ${t.bankInfo}`]); }
+  for (const id in vaDB) { const t = vaDB[id]; if (t.status === 'pending' && !t.notified) j.push([`vas/${id}/notified`, 'n', `🏦 YÊU CẦU TẠO VA ${t.bank}\n${who(t)}`]); }
+  return j;
+}
+
+/* --- khách --- */
+function renderCust() {
+  if (staff || !me) return;
+  kchips('kChips', kho);
+  $('kNote').style.display = khoNotes[kho] ? '' : 'none'; $('kNote').textContent = 'Lưu ý ' + nm(kho) + ':\n' + (khoNotes[kho] || '');
+  const items = Object.keys(shopDB).filter(k => shopDB[k].kho === kho && !shopDB[k].sold).sort((a, b) => shopDB[a].createdAt - shopDB[b].createdAt);
+  $('kList').innerHTML = items.map(k => { const it = shopDB[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${fmt(it.price)}</small></div><button class="btn" data-a="buy" data-k="${k}">Mua · ${fmt(it.price)}</button></div>${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Kho này đang hết acc.</div>';
+  const mine = Object.keys(shopDB).filter(k => shopDB[k].buyerUid === me.uid).sort((a, b) => (shopDB[b].soldAt || 0) - (shopDB[a].soldAt || 0));
+  $('myAcc').innerHTML = mine.map(k => { const it = shopDB[k], sc = secCache[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${nm(it.kho)} · ${fd(it.soldAt)}</small></div>${sc ? '' : `<button class="btn s" data-a="view" data-k="${k}">Xem acc</button>`}</div>${sc ? ['tk', 'mk'].map(f => `<button class="fld" data-a="cps" data-k="${k}" data-f="${f}"><span>${f.toUpperCase()}</span><span>${esc(sc[f])}</span></button>`).join('') : ''}${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Chưa mua acc nào.</div>';
+  $('mySell').innerHTML = lst(sellDB, t => `<div class="card"><div class="row"><div class="t">${esc(t.note)}<small>${fd(t.createdAt)}${t.status === 'approved' ? ' · +' + fmt(t.amount) : ''}</small></div>${SS[t.status] || ''}</div></div>`) || '<div class="empty">Chưa gửi cầu thủ nào.</div>';
+  $('myWd').innerHTML = lst(wdDB, t => `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${t.status === 'rejected' ? '<span class="pill r">Từ chối · đã hoàn tiền</span>' : t.status === 'done' ? SS.done : '<span class="pill a">Chờ admin chuyển</span>'}</div></div>`) || '<div class="empty">Chưa có yêu cầu rút tiền.</div>';
+  const v = vaDB[me.uid];
+  $('vaBox').innerHTML = !v ? '<select id="vaBank" class="in"><option>MSB</option><option>BIDV</option></select><button class="btn w" data-a="vago">Yêu cầu tạo VA</button>'
+    : v.status === 'done' ? `<button class="fld" data-a="cpv" data-v="${esc(v.number)}"><span>${esc(v.bank)} · STK</span><span>${esc(v.number)}</span></button><div class="msg">Chủ TK: ${esc(v.name || '')}\n(bấm số TK để sao chép)</div>`
+    : `<div class="msg" style="margin:0">Đã gửi yêu cầu tạo VA ${esc(v.bank)}, vui lòng chờ admin.</div>`;
+}
+$('kChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { kho = b.dataset.f; renderCust(); } };
+$('kList').onclick = async e => {
+  const b = e.target.closest('[data-a=buy]'); if (!b || staff) return; const k = b.dataset.k, it = shopDB[k]; if (!it || it.sold) return;
+  if (it.price > me.balance) return toast('Số dư không đủ, hãy nạp thêm', 1);
+  if (!confirm(`Mua "${it.name}" giá ${fmt(it.price)}?`)) return;
+  try { await update(ref(db), { [`shopAcc/${k}/sold`]: true, [`shopAcc/${k}/buyerUid`]: me.uid, [`shopAcc/${k}/buyerName`]: me.username, [`shopAcc/${k}/soldAt`]: Date.now(), [`users/${me.uid}/balance`]: me.balance - it.price }); ping('buy', k); toast('Mua thành công, xem ở mục "Acc đã mua"'); }
+  catch { toast('Không mua được: acc vừa bán hoặc số dư không đủ', 1); }
+};
+$('myAcc').onclick = async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return; const k = b.dataset.k;
+  if (b.dataset.a === 'view') { try { secCache[k] = (await get(ref(db, 'shopSecret/' + k))).val(); renderCust(); } catch (x) { toast(x.message, 1); } }
+  if (b.dataset.a === 'cps' && secCache[k]) copy(secCache[k][b.dataset.f] || '');
+};
+$('vaBox').onclick = async e => {
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  if (b.dataset.a === 'cpv') return copy(b.dataset.v);
+  if (b.dataset.a === 'vago') set(ref(db, 'vas/' + me.uid), { uid: me.uid, username: me.username, bank: $('vaBank').value, status: 'pending', createdAt: Date.now(), notified: false }).then(() => { ping('vas', me.uid); toast('Đã gửi yêu cầu tạo VA'); }).catch(x => toast(x.message, 1));
+};
+$('pySave').onclick = () => update(ref(db, 'users/' + me.uid), { payout: $('pyIn').value.trim().slice(0, 200) }).then(() => toast('Đã lưu thông tin rút tiền')).catch(x => toast(x.message, 1));
+$('wdGo').onclick = async () => {
+  const a = Math.round(Number($('wdAmt').value)), py = (me.payout || '').trim();
+  if (!py) return toast('Hãy lưu thông tin rút tiền trước', 1);
+  if (!(a >= MINWD && a <= 100000000)) return toast('Rút từ ' + fmt(MINWD) + ' đến 100.000.000đ', 1);
+  if (a > me.balance) return toast('Số dư không đủ', 1);
+  if (!confirm(`Rút ${fmt(a)} về:\n${py}`)) return;
+  $('wdGo').disabled = true;
+  try { const id = push(ref(db, 'withdraws')).key; await update(ref(db), { ['withdraws/' + id]: { uid: me.uid, username: me.username, amount: a, bankInfo: py, status: 'pending', createdAt: Date.now(), notified: false }, [`users/${me.uid}/balance`]: me.balance - a }); ping('withdraws', id); $('wdAmt').value = ''; toast('Đã gửi yêu cầu, vui lòng chờ admin chuyển khoản'); }
+  catch (x) { toast('Không gửi được: ' + x.message, 1); }
+  $('wdGo').disabled = false;
+};
+$('slFile').onchange = async e => { const f = e.target.files[0]; slData = null; $('slPrev').style.display = 'none'; if (!f) return; try { slData = await shrink(f); $('slPrev').src = slData; $('slPrev').style.display = ''; } catch { toast('Không đọc được ảnh, hãy chọn ảnh khác', 1); } };
+$('slGo').onclick = async () => {
+  const note = $('slNote').value.trim().slice(0, 200); if (!note) return toast('Nhập tên cầu thủ / mô tả', 1); if (!slData) return toast('Vui lòng tải ảnh xác nhận', 1);
+  $('slGo').disabled = true;
+  try { const id = push(ref(db, 'sells')).key; await update(ref(db), { ['sells/' + id]: { uid: me.uid, username: me.username, note, status: 'pending', createdAt: Date.now(), notified: false, hasBill: true }, ['bills/' + id]: slData }); ping('sells', id); $('slNote').value = ''; $('slFile').value = ''; $('slPrev').style.display = 'none'; slData = null; toast('Đã gửi, vui lòng chờ admin xác nhận'); }
+  catch (x) { toast('Không gửi được: ' + x.message, 1); }
+  $('slGo').disabled = false;
+};
+
+/* --- admin / hỗ trợ: quản lý kho --- */
+function renderKho() {
+  if (!staff) return;
+  kchips('kaChips', kaf);
+  const ks = Object.keys(shopDB).filter(k => shopDB[k].kho === kaf).sort((a, b) => shopDB[b].createdAt - shopDB[a].createdAt);
+  $('kaList').innerHTML = `<div class="hint">${nm(kaf)}: còn ${ks.filter(k => !shopDB[k].sold).length} / ${ks.length} acc</div>` + (ks.map(k => { const it = shopDB[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${fmt(it.price)} · ${it.sold ? 'Bán: ' + esc(it.buyerName || '') + ' · ' + fd(it.soldAt) : fd(it.createdAt)}</small></div><span class="pill ${it.sold ? 'a' : 'g'}">${it.sold ? 'Đã bán' : 'Còn hàng'}</span></div>${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}${admin && !it.sold ? `<div class="foot acts"><button class="btn r" data-a="kdel" data-k="${k}">Xóa</button></div>` : ''}</div>`; }).join('') || '<div class="empty">Kho chưa có acc.</div>');
+}
+$('kaChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { kaf = b.dataset.f; renderKho(); } };
+$('kaList').onclick = e => { const b = e.target.closest('[data-a=kdel]'); if (!b || !admin) return; const k = b.dataset.k; if (shopDB[k] && !shopDB[k].sold && confirm('Xóa acc này khỏi kho?')) update(ref(db), { ['shopAcc/' + k]: null, ['shopSecret/' + k]: null }).then(() => toast('Đã xóa')).catch(x => toast(x.message, 1)); };
+$('khoSel').onchange = () => { $('khoNote').value = khoNotes[$('khoSel').value] || ''; };
+$('khoSave').onclick = () => update(ref(db, 'public/khoNotes'), { [$('khoSel').value]: $('khoNote').value.trim().slice(0, 1000) }).then(() => toast('Đã lưu lưu ý kho')).catch(x => toast(x.message, 1));
+const addShop = (kh, tk, mk, name, price, note, t) => { const id = push(ref(db, 'shopAcc')).key; return update(ref(db), { ['shopAcc/' + id]: { kho: kh, name: name || tk, price, note, sold: false, createdAt: t, createdBy: me.username }, ['shopSecret/' + id]: { tk, mk } }); };
+const okPrice = p => p >= 1000 && p <= 100000000;
+$('saGo').onclick = async () => {
+  const tk = $('saTk').value.trim(), mk = $('saMk').value.trim(), price = Math.round(Number($('saPrice').value));
+  if (!tk || !mk) return toast('Nhập tài khoản và mật khẩu', 1); if (!okPrice(price)) return toast('Giá từ 1.000đ đến 100.000.000đ', 1);
+  try { await addShop($('addKho').value, tk, mk, $('saName').value.trim(), price, $('saNote').value.trim(), Date.now()); ['saTk', 'saMk', 'saName', 'saNote'].forEach(i => $(i).value = ''); toast('Đã thêm acc vào ' + nm($('addKho').value)); } catch (e) { toast(e.message, 1); }
+};
+$('saBulkGo').onclick = async () => {
+  const lines = $('saBulk').value.split('\n').map(l => l.trim()).filter(Boolean); if (!lines.length) return toast('Chưa có dòng nào', 1);
+  $('saBulkGo').disabled = true; let ok = 0, err = 0; const now = Date.now(), kh = $('addKho').value, jobs = [];
+  lines.forEach((l, i) => { const [tk, mk, pr, name, ...r] = l.split('|').map(x => x.trim()), price = Math.round(Number(pr)); if (!tk || !mk || !okPrice(price)) return err++; jobs.push(addShop(kh, tk, mk, name, price, r.join('|'), now + i).then(() => ok++, () => err++)); });
+  await Promise.all(jobs); $('saBulk').value = ''; toast(`Đã nhập ${ok} · lỗi ${err}`, err); $('saBulkGo').disabled = false;
+};
+
+/* --- admin / hỗ trợ: yêu cầu rút tiền, bán cầu thủ, VA --- */
+function renderReq() {
+  if (!staff) return;
+  const P = o => Object.keys(o).sort((a, b) => (o[a].status === 'pending' ? 0 : 1) - (o[b].status === 'pending' ? 0 : 1) || (o[b].createdAt || 0) - (o[a].createdAt || 0));
+  const hd = (ttl, sub, pill) => `<div class="row"><div class="t">${ttl}<small>${sub}</small></div>${pill}</div>`;
+  let n = 0;
+  const w = P(wdDB).map(id => { const t = wdDB[id], p = t.status === 'pending'; n += p ? 1 : 0; return `<div class="card">${hd('💸 Rút tiền · ' + esc(t.username) + ' · ' + fmt(t.amount), fd(t.createdAt) + ' · ID ' + U6(t.uid), t.status === 'rejected' ? '<span class="pill r">Đã hoàn tiền</span>' : p ? '<span class="pill a">Chờ chuyển</span>' : SS.done)}<div class="msg">${esc(t.bankInfo)}</div>${p ? `<div class="foot acts"><button class="btn g" data-a="wdok" data-k="${id}">Đã chuyển khoản</button><button class="btn r" data-a="wdno" data-k="${id}">Từ chối · hoàn tiền</button></div>` : ''}</div>`; });
+  const sl = P(sellDB).map(id => { const t = sellDB[id], p = t.status === 'pending'; n += p ? 1 : 0; return `<div class="card">${hd('🏏 Bán cầu thủ · ' + esc(t.username), fd(t.createdAt) + ' · ID ' + U6(t.uid) + (t.status === 'approved' ? ' · +' + fmt(t.amount) : ''), SS[t.status] || '')}<div class="msg">${esc(t.note)}</div>${t.hasBill ? `<div class="acts" style="margin-top:8px"><button class="btn s" data-a="bill" data-k="${id}">🖼 ${billCache[id] ? 'Ảnh' : 'Xem ảnh'}</button></div>${billCache[id] ? `<img src="${billCache[id]}" alt="" style="max-width:100%;border-radius:10px;margin-top:8px">` : ''}` : ''}${p ? `<div class="foot acts"><button class="btn g" data-a="slok" data-k="${id}">Xác nhận · cộng tiền</button><button class="btn r" data-a="slno" data-k="${id}">Từ chối</button></div>` : ''}</div>`; });
+  const va = P(vaDB).map(id => { const t = vaDB[id], p = t.status === 'pending'; n += p ? 1 : 0; return `<div class="card">${hd('🏦 VA ' + esc(t.bank) + ' · ' + esc(t.username), fd(t.createdAt) + ' · ID ' + U6(t.uid), p ? '<span class="pill a">Chờ tạo</span>' : '<span class="pill g">Đã gửi</span>')}${p ? `<div class="foot acts"><button class="btn g" data-a="vaok" data-k="${id}">Nhập số VA</button></div>` : `<div class="msg">${esc(t.number)} · ${esc(t.name || '')}</div>`}</div>`; });
+  $('reqList').innerHTML = [...w, ...sl, ...va].join('') || '<div class="empty">Chưa có yêu cầu nào.</div>';
+  $('bRq').textContent = n || '';
+}
+$('reqList').onclick = async e => {
+  const b = e.target.closest('[data-a]'); if (!b || !staff) return; const id = b.dataset.k, a = b.dataset.a, done = (p, extra) => update(ref(db, p), { handledBy: me.username, handledAt: Date.now(), ...extra }).catch(() => {});
+  if (a === 'bill') { if (!billCache[id]) { try { billCache[id] = (await get(ref(db, 'bills/' + id))).val() || ''; } catch (x) { return toast(x.message, 1); } } if (!billCache[id]) return toast('Không có ảnh', 1); return renderReq(); }
+  if (a === 'wdok' || a === 'wdno') {
+    const t = wdDB[id]; if (!t || t.status !== 'pending') return;
+    if (a === 'wdok') {
+      if (!confirm(`Xác nhận đã chuyển ${fmt(t.amount)} cho ${t.username}?`)) return;
+      if (!(await claim('withdraws/' + id, 'pending', 'done'))) return toast('Yêu cầu đã được xử lý', 1);
+      done('withdraws/' + id); toast('Đã đánh dấu đã chuyển'); shop(`💸 ĐÃ CHUYỂN TIỀN RÚT\nKhách: ${t.username}\nSố tiền: ${fmt(t.amount)}\nBởi: ${me.username}`);
+    } else {
+      if (!confirm(`Từ chối và hoàn ${fmt(t.amount)} cho ${t.username}?`)) return;
+      if (!(await claim('withdraws/' + id, 'pending', 'rejected'))) return toast('Yêu cầu đã được xử lý', 1);
+      if ((await adjust(t.uid, Number(t.amount))) === null) { await set(ref(db, `withdraws/${id}/status`), 'pending'); return toast('Không hoàn được tiền', 1); }
+      done('withdraws/' + id); toast('Đã từ chối và hoàn tiền');
+    }
+  }
+  if (a === 'slok' || a === 'slno') {
+    const t = sellDB[id]; if (!t || t.status !== 'pending') return;
+    if (a === 'slok') {
+      const amt = Math.round(Number(prompt(`Số tiền cộng vào ví chính cho ${t.username} (VND):`))); if (!okAmt(amt)) return toast('Số tiền từ 1.000đ đến 100.000.000đ', 1);
+      if (!(await claim('sells/' + id, 'pending', 'approved'))) return toast('Yêu cầu đã được xử lý', 1);
+      const nb = await adjust(t.uid, amt); if (nb === null) { await set(ref(db, `sells/${id}/status`), 'pending'); return toast('Không cộng được số dư', 1); }
+      done('sells/' + id, { amount: amt }); toast(`Đã cộng ${fmt(amt)} cho ${t.username}`); shop(`🏏 ĐÃ DUYỆT BÁN CẦU THỦ\nKhách: ${t.username}\nCộng: ${fmt(amt)}\nSố dư mới: ${fmt(nb)}\nBởi: ${me.username}`);
+    } else if (confirm(`Từ chối yêu cầu của ${t.username}?`)) { if (!(await claim('sells/' + id, 'pending', 'rejected'))) return toast('Yêu cầu đã được xử lý', 1); done('sells/' + id); toast('Đã từ chối'); }
+  }
+  if (a === 'vaok') {
+    const t = vaDB[id]; if (!t) return; const number = (prompt(`Số VA ${t.bank} cho ${t.username}:`) || '').trim(); if (!number) return;
+    const name = (prompt('Tên chủ tài khoản VA:') || '').trim();
+    update(ref(db, 'vas/' + id), { status: 'done', number: number.slice(0, 40), name: name.slice(0, 80), handledBy: me.username, handledAt: Date.now() }).then(() => toast('Đã gửi VA cho khách')).catch(x => toast(x.message, 1));
+  }
 };
 
 /* ---------- thêm acc / data ---------- */
@@ -560,7 +744,7 @@ $('depSave').onclick = () => set(ref(db, 'public/depositInfo'), $('depIn').value
 $('bkExp').onclick = () => {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportedAt: Date.now(), accban: accDB }, null, 2)], { type: 'application/json' }));
-  a.download = 'qlifc-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  a.download = 'bustore-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
 };
 $('bkImp').onclick = () => $('bkFile').click();
 $('bkFile').onchange = async e => {
