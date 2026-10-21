@@ -60,7 +60,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 <div id="toast"></div>
 
 <div id="app">
-  <header><div><h1>Master Admin</h1><small>Kho QLI FC by GBAO</small></div>
+  <header><div><h1>Bủ STORE</h1><small>Kho Acc Tân Thủ Xịn Xò</small></div>
     <div class="row"><button class="btn s tg" data-theme-toggle title="Đổi nền sáng/tối">🌓</button><div style="text-align:right"><b id="hUser"></b><br><small id="hRole"></small></div><button class="btn s" id="btnOut">Thoát</button></div></header>
 
   <section class="rev st"><small>TỔNG DOANH THU BÁN HÀNG</small><div class="t" id="rTotal">0đ</div>
@@ -91,23 +91,31 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
 
   <section id="v-topups" class="v st">
     <div class="box"><b>Nạp tiền cho khách</b><br><br><select id="tpUser" class="in"></select><input id="tpAmt" type="number" class="in" placeholder="Số tiền (VND)"><input id="tpNote" class="in" placeholder="Ghi chú (không bắt buộc)"><button class="btn w" id="tpAdd">Cộng số dư</button></div>
+    <div class="box ad"><b>Trừ tiền khách</b><br><br><select id="dcUser" class="in"></select><input id="dcAmt" type="number" class="in" placeholder="Số tiền trừ (VND)"><input id="dcNote" class="in" placeholder="Lý do trừ tiền (bắt buộc)" maxlength="100"><button class="btn r w" id="dcGo">Trừ số dư</button></div>
     <div id="topupList" class="v on"></div>
   </section>
 
   <section id="v-tickets" class="v st"><div id="ticketList" class="v on"></div></section>
 
   <section id="v-system" class="v ad">
-    <div class="box"><b>Telegram</b><p class="hint">Bot thông báo: thành viên mới, báo lỗi. Bot acc + data: bán acc, nạp tiền.</p>
+    <div class="box"><b>Telegram</b><p class="hint">Bot thông báo: thành viên mới, báo lỗi. Bot acc + data: bán acc, nạp tiền. Bot bank: đơn nạp mới kèm ảnh bill.</p>
       <input id="tgN" type="password" class="in" placeholder="Token bot thông báo"><input id="tgS" type="password" class="in" placeholder="Token bot acc + data">
-      <input id="tgC" class="in" placeholder="Chat ID (-100...)"><label class="hint"><input type="checkbox" id="tgOn"> Bật thông báo Telegram</label>
+      <input id="tgB" type="password" class="in" placeholder="Token bot bank (nhận ảnh bill nạp tiền)"><input id="tgC" class="in" placeholder="Chat ID (-100...)"><input id="tgBC" class="in" placeholder="Chat ID bot bank (để trống = dùng Chat ID chung)"><label class="hint"><input type="checkbox" id="tgOn"> Bật thông báo Telegram</label>
       <div class="row"><button class="btn s" id="tgTest">Gửi thử</button><button class="btn" id="tgSave">Lưu</button></div></div>
+    <div class="box"><b>Tài khoản nhận tiền (tạo QR cho khách)</b><p class="hint">Mã ngân hàng viết tắt như MB, VCB, ACB, TCB, BIDV, VPB. Khách sẽ thấy QR kèm số tiền và nội dung nạp.</p><input id="bkB" class="in" placeholder="Mã ngân hàng (vd: MB)"><input id="bkA" class="in" placeholder="Số tài khoản"><input id="bkN" class="in" placeholder="Tên chủ tài khoản"><button class="btn" id="bkSave">Lưu tài khoản</button></div>
     <div class="box"><b>Thông tin nạp tiền cho khách</b><br><br><textarea id="depIn" class="in" style="font-family:inherit" placeholder="VD: Vietcombank - 0123456789 - NGUYEN VAN A"></textarea><button class="btn" id="depSave">Lưu thông tin</button></div>
     <div class="box"><b>Sao lưu dữ liệu</b><p class="hint">Sao lưu danh sách acc (không gồm người dùng, số dư).</p><div class="row"><button class="btn s" id="bkExp">Sao lưu JSON</button><button class="btn s" id="bkImp">Khôi phục JSON</button></div><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
   </section>
 
   <section id="v-utopup" class="v us">
-    <div class="box"><b>Yêu cầu nạp tiền</b><br><br><div class="msg" id="depInfo" style="display:none;margin:0 0 8px"></div>
-      <input id="utAmt" type="number" class="in" placeholder="Số tiền đã chuyển (VND)"><input id="utNote" class="in" placeholder="Nội dung chuyển khoản" maxlength="100"><button class="btn w" id="utGo">Gửi yêu cầu</button></div>
+    <div class="box"><b>Nạp tiền</b><br><br>
+      <input id="utAmt" type="number" class="in" placeholder="Số tiền muốn nạp (VND)">
+      <div id="qrBox" style="display:none;text-align:center;margin-bottom:8px"><img id="qrImg" alt="QR chuyển khoản" style="width:100%;max-width:300px;border-radius:12px;background:#fff"><div class="msg" id="bankTxt" style="text-align:left"></div></div>
+      <div class="msg" id="depInfo" style="display:none;margin:0 0 8px"></div>
+      <div class="msg" id="memoBox" style="margin:0 0 8px;cursor:pointer"></div>
+      <label class="hint">Ảnh bill chuyển khoản (bắt buộc):</label><input id="utFile" type="file" accept="image/*" class="in">
+      <img id="utPrev" alt="" style="display:none;max-width:100%;border-radius:10px;margin-bottom:8px">
+      <button class="btn w" id="utGo">Gửi yêu cầu nạp</button></div>
     <div id="myTop" class="v on"></div>
   </section>
   <section id="v-usup" class="v us">
@@ -144,18 +152,28 @@ const copy = (t, m) => navigator.clipboard.writeText(t).then(() => toast(m || '�
 
 let me, staff = false, admin = false, started = false, mode = 'login', registering = false, tried = false;
 let accDB = {}, usersDB = {}, topDB = {}, tkDB = {}, tg = null;
-let filt = { acc: 'avail' }, secrets = false;
+let filt = { acc: 'avail' }, secrets = false, bankCfg = null, billData = null, billCache = {};
 
 /* ---------- số dư & telegram ---------- */
 const adjust = async (uid, d) => {
   try { const r = await runTransaction(ref(db, `users/${uid}/balance`), c => { const n = Number(c || 0) + d; return n < 0 ? undefined : n; }); return r.committed ? r.snapshot.val() : null; }
   catch { return null; }
 };
+const pick = (bot, cfg) => !cfg ? [] : bot === 'n' ? [cfg.noticeToken, cfg.chatId] : bot === 'b' ? [cfg.bankToken || cfg.shopToken, cfg.bankChatId || cfg.chatId] : [cfg.shopToken, cfg.chatId];
 async function tgSend(bot, text, cfg = tg) {
-  const t = cfg && (bot === 'n' ? cfg.noticeToken : cfg.shopToken);
-  if (!t || !cfg.chatId) return false;
-  try { const r = await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: cfg.chatId, text }) }); return !!(await r.json()).ok; }
+  const [t, chat] = pick(bot, cfg);
+  if (!t || !chat) return false;
+  try { const r = await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chat, text }) }); return !!(await r.json()).ok; }
   catch { return false; }
+}
+async function tgPhoto(bot, caption, bid, cfg = tg) {
+  const [t, chat] = pick(bot, cfg); if (!t || !chat) return false;
+  try {
+    const d = (await get(ref(db, 'bills/' + bid))).val();
+    if (!d) return tgSend(bot, caption, cfg);
+    const form = new FormData(); form.append('chat_id', chat); form.append('caption', caption.slice(0, 1000)); form.append('photo', await (await fetch(d)).blob(), 'bill.jpg');
+    return !!(await (await fetch(`https://api.telegram.org/bot${t}/sendPhoto`, { method: 'POST', body: form })).json()).ok;
+  } catch { return false; }
 }
 const shop = t => { if (staff && tg && tg.enabled) tgSend('s', t); };
 
@@ -213,7 +231,7 @@ function access() {
   if (me.status !== 'approved') {
     $('app').style.display = 'none'; $('gate').style.display = 'flex';
     $('gT').textContent = me.status === 'blocked' ? 'Tài khoản bị khóa' : 'Đang chờ duyệt';
-    $('gP').textContent = me.status === 'blocked' ? 'Liên hệ admin để được hỗ trợ.' : `Tài khoản "${me.username}" đã tạo. Trang sẽ tự cập nhật khi admin duyệt.`;
+    $('gP').textContent = me.status === 'blocked' ? 'Lý do: ' + (me.blockReason || 'Không có') + '. Liên hệ admin để được hỗ trợ.' : `Tài khoản "${me.username}" đã tạo. Trang sẽ tự cập nhật khi admin duyệt.`;
     return;
   }
   if (started && started !== me.role) return location.reload();
@@ -221,6 +239,7 @@ function access() {
   $('gate').style.display = 'none'; $('app').style.display = 'flex';
   document.body.classList.toggle('is-admin', admin); document.body.classList.toggle('is-staff', staff); document.body.classList.toggle('is-user', !staff);
   $('bal').textContent = fmt(me.balance);
+  if (!staff) renderQR();
   if (!started) { started = me.role; staff ? startStaff() : startCustomer(); tab(staff ? 'acc' : 'utopup'); }
   renderAll();
 }
@@ -234,11 +253,13 @@ function startStaff() {
   onValue(query(ref(db, 'topups'), limitToLast(200)), s => { topDB = s.val() || {}; renderAll(); queue(); }, () => {});
   onValue(query(ref(db, 'tickets'), limitToLast(200)), s => { tkDB = s.val() || {}; renderAll(); queue(); }, () => {});
   onValue(ref(db, 'public/depositInfo'), s => { if (document.activeElement !== $('depIn')) $('depIn').value = s.val() || ''; }, () => {});
+  onValue(ref(db, 'public/bank'), s => { const b = s.val() || {}; if (!['bkB', 'bkA', 'bkN'].includes(document.activeElement.id)) { $('bkB').value = b.bank || ''; $('bkA').value = b.acc || ''; $('bkN').value = b.name || ''; } }, () => {});
 }
 function startCustomer() {
   onValue(query(ref(db, 'topups'), orderByChild('uid'), equalTo(me.uid)), s => { topDB = s.val() || {}; renderMine(); }, () => {});
   onValue(query(ref(db, 'tickets'), orderByChild('uid'), equalTo(me.uid)), s => { tkDB = s.val() || {}; renderMine(); }, () => {});
   onValue(ref(db, 'public/depositInfo'), s => { const v = s.val(); $('depInfo').style.display = v ? '' : 'none'; $('depInfo').textContent = v || ''; }, () => {});
+  onValue(ref(db, 'public/bank'), s => { bankCfg = s.val(); renderQR(); }, () => {});
 }
 
 /* hàng đợi thông báo (chỉ staff) */
@@ -250,11 +271,11 @@ async function queue() {
     const jobs = [];
     for (const id in usersDB) { const u = usersDB[id]; if (u.role === 'user' && u.status === 'pending' && !u.notified) jobs.push([`users/${id}/notified`, 'n', `👤 THÀNH VIÊN MỚI\nTên đăng nhập: ${u.username}\nĐang chờ admin duyệt.`]); }
     for (const id in tkDB) { const t = tkDB[id]; if (t.status === 'open' && !t.notified) jobs.push([`tickets/${id}/notified`, 'n', `🆘 ${t.type === 'error' ? 'KHÁCH BÁO LỖI' : 'KHÁCH CẦN HỖ TRỢ'}\nTừ: ${t.username}\n${t.message}`]); }
-    for (const id in topDB) { const t = topDB[id]; if (t.status === 'pending' && !t.notified) jobs.push([`topups/${id}/notified`, 's', `🧾 YÊU CẦU NẠP TIỀN\nKhách: ${t.username}\nSố tiền: ${fmt(t.amount)}${t.note ? '\nND: ' + t.note : ''}`]); }
-    for (const [p, bot, txt] of jobs) {
+    for (const id in topDB) { const t = topDB[id]; if (t.status === 'pending' && !t.notified) jobs.push([`topups/${id}/notified`, 'b', `🧾 BẠN CÓ ĐƠN NẠP MỚI, VUI LÒNG XÁC NHẬN\nUser: ${t.username}\nID web: ${String(t.uid).slice(0, 6).toUpperCase()}\nSố tiền: ${fmt(t.amount)}${t.note ? '\nND: ' + t.note : ''}\nẢnh chuyển khoản: ${t.hasBill ? 'có (đính kèm)' : 'không có'}`, t.hasBill ? id : null]); }
+    for (const [p, bot, txt, bid] of jobs) {
       if (retry[p] > Date.now()) continue;
       if (!(await runTransaction(ref(db, p), c => c === true ? undefined : true)).committed) continue;
-      if (!(await tgSend(bot, txt))) { await set(ref(db, p), false).catch(() => {}); retry[p] = Date.now() + 60000; }
+      if (!(await (bid ? tgPhoto(bot, txt, bid) : tgSend(bot, txt)))) { await set(ref(db, p), false).catch(() => {}); retry[p] = Date.now() + 60000; }
     }
   } finally { busy = false; }
 }
@@ -288,7 +309,7 @@ function renderUsers() {
   const ids = Object.keys(usersDB).sort((a, b) => (ord[usersDB[a].status] ?? 3) - (ord[usersDB[b].status] ?? 3) || (usersDB[b].createdAt || 0) - (usersDB[a].createdAt || 0));
   const custs = ids.filter(i => usersDB[i].role === 'user' && usersDB[i].status === 'approved');
   const opts = custs.map(i => `<option value="${i}">${esc(usersDB[i].username)} — ${fmt(usersDB[i].balance)}</option>`).join('');
-  [['cust', '<option value="">Bán ngoài (không trừ số dư)</option>'], ['tpUser', '<option value="">Chọn khách hàng</option>']].forEach(([id, first]) => { const s = $(id), c = s.value; s.innerHTML = first + opts; s.value = custs.includes(c) ? c : ''; });
+  [['cust', '<option value="">Bán ngoài (không trừ số dư)</option>'], ['tpUser', '<option value="">Chọn khách hàng</option>'], ['dcUser', '<option value="">Chọn khách hàng</option>']].forEach(([id, first]) => { const s = $(id), c = s.value; s.innerHTML = first + opts; s.value = custs.includes(c) ? c : ''; });
   $('userList').innerHTML = ids.map(id => {
     const u = usersDB[id], self = id === me.uid;
     const pill = u.status === 'approved' ? '<span class="pill g">Đã duyệt</span>' : u.status === 'blocked' ? '<span class="pill r">Đã khóa</span>' : '<span class="pill a">Chờ duyệt</span>';
@@ -300,18 +321,19 @@ function renderUsers() {
       if (admin && u.status === 'approved') a += `<button class="btn r" data-a="block" data-k="${id}">Khóa</button>`;
       if (admin && u.status === 'blocked') a += `<button class="btn g" data-a="ok" data-k="${id}">Mở khóa</button>`;
     }
-    return `<div class="card"><div class="row"><div class="t">${esc(u.username)}<small>${ROLE[u.role] || 'Khách'}${u.role === 'user' ? ' · số dư ' + fmt(u.balance) : ''} · ${fd(u.createdAt)}</small></div>${pill}</div>${a ? `<div class="foot acts">${a}</div>` : ''}</div>`;
+    return `<div class="card"><div class="row"><div class="t">${esc(u.username)}<small>${ROLE[u.role] || 'Khách'}${u.role === 'user' ? ' · số dư ' + fmt(u.balance) + ' · ID ' + id.slice(0, 6).toUpperCase() : ''} · ${fd(u.createdAt)}</small></div>${pill}</div>${u.status === 'blocked' && u.blockReason ? `<div class="msg">Lý do khóa: ${esc(u.blockReason)}${u.blockedBy ? ' · bởi ' + esc(u.blockedBy) : ''}${u.blockedAt ? ' · ' + fd(u.blockedAt) : ''}</div>` : ''}${a ? `<div class="foot acts">${a}</div>` : ''}</div>`;
   }).join('') || '<div class="empty">Chưa có người dùng.</div>';
   const n = ids.filter(i => usersDB[i].status === 'pending').length;
   document.querySelector('[data-t=users]').textContent = 'Khách hàng' + (n ? ` (${n})` : '');
 }
-const TP = { pending: '<span class="pill a">Chờ duyệt</span>', approved: '<span class="pill g">Đã cộng</span>', rejected: '<span class="pill r">Từ chối</span>' };
+const TP = { pending: '<span class="pill a">Chờ duyệt</span>', approved: '<span class="pill g">Đã cộng</span>', rejected: '<span class="pill r">Từ chối</span>', unmatched: '<span class="pill a">Chưa khớp</span>' };
 function renderTopups() {
   const ids = Object.keys(topDB).sort((a, b) => (topDB[a].status === 'pending' ? 0 : 1) - (topDB[b].status === 'pending' ? 0 : 1) || (topDB[b].createdAt || 0) - (topDB[a].createdAt || 0));
   $('bTp').textContent = ids.filter(i => topDB[i].status === 'pending').length || '';
   $('topupList').innerHTML = ids.map(id => {
     const t = topDB[id];
-    return `<div class="card"><div class="row"><div class="t">${esc(t.username)} · ${fmt(t.amount)}<small>${fd(t.createdAt)}${t.direct ? ' · nạp trực tiếp' : ''}</small></div>${TP[t.status] || ''}</div>${t.note ? `<div class="msg">${esc(t.note)}</div>` : ''}
+    return `<div class="card"><div class="row"><div class="t">${esc(t.username)} · ${fmt(t.amount)}<small>${fd(t.createdAt)}${t.auto ? ' · tự động' : t.direct ? (t.deduct ? ' · trừ tiền' : ' · nạp trực tiếp') : ''}</small></div>${t.deduct ? '<span class="pill r">Đã trừ</span>' : TP[t.status] || ''}</div>${t.note ? `<div class="msg">${esc(t.note)}</div>` : ''}
+    ${t.hasBill ? `<div class="acts" style="margin-top:8px"><button class="btn s" data-a="bill" data-k="${id}">🧾 ${billCache[id] ? 'Ảnh bill' : 'Xem bill'}</button></div><div>${billCache[id] ? `<img src="${billCache[id]}" alt="bill" style="max-width:100%;border-radius:10px;margin-top:8px">` : ''}</div>` : ''}
     ${t.status === 'pending' ? `<div class="foot acts"><button class="btn g" data-a="tpok" data-k="${id}">Duyệt · cộng tiền</button><button class="btn r" data-a="tpno" data-k="${id}">Từ chối</button></div>` : t.handledBy ? `<div class="foot"><small>Xử lý: ${esc(t.handledBy)} · ${fd(t.handledAt)}</small></div>` : ''}</div>`;
   }).join('') || '<div class="empty">Chưa có yêu cầu nạp tiền.</div>';
 }
@@ -325,7 +347,7 @@ function renderTickets() {
   }).join('') || '<div class="empty">Chưa có yêu cầu hỗ trợ.</div>';
 }
 function renderMine() {
-  $('myTop').innerHTML = Object.keys(topDB).sort((a, b) => (topDB[b].createdAt || 0) - (topDB[a].createdAt || 0)).map(id => { const t = topDB[id]; return `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${TP[t.status] || ''}</div></div>`; }).join('') || '<div class="empty">Chưa có yêu cầu nạp tiền.</div>';
+  $('myTop').innerHTML = Object.keys(topDB).sort((a, b) => (topDB[b].createdAt || 0) - (topDB[a].createdAt || 0)).map(id => { const t = topDB[id]; return `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${t.deduct ? '<span class="pill r">Đã trừ</span>' : TP[t.status] || ''}</div>${t.deduct && t.note ? `<div class="msg">Lý do: ${esc(t.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Chưa có yêu cầu nạp tiền.</div>';
   $('myTk').innerHTML = Object.keys(tkDB).sort((a, b) => (tkDB[b].createdAt || 0) - (tkDB[a].createdAt || 0)).map(id => { const t = tkDB[id]; return `<div class="card"><div class="row"><div class="t">${t.type === 'error' ? 'Báo lỗi' : 'Cần hỗ trợ'}<small>${fd(t.createdAt)}</small></div><span class="pill ${t.status === 'open' ? 'a' : 'g'}">${t.status === 'open' ? 'Đang xử lý' : 'Đã xử lý'}</span></div><div class="msg">${esc(t.message)}</div></div>`; }).join('') || '<div class="empty">Chưa gửi yêu cầu nào.</div>';
 }
 function renderAll() { if (staff) { renderStats(); renderAcc(); renderUsers(); renderTopups(); renderTickets(); } else renderMine(); }
@@ -370,8 +392,17 @@ $('accList').onclick = async e => {
 /* ---------- người dùng ---------- */
 $('userList').onclick = e => {
   const b = e.target.closest('[data-a]'); if (!b || !staff) return; const id = b.dataset.k, u = usersDB[id]; if (!u || id === me.uid) return;
-  if (b.dataset.a === 'ok') update(ref(db, `users/${id}`), { status: 'approved', approvedAt: Date.now(), approvedBy: me.username }).then(() => toast('Đã cấp quyền cho ' + u.username)).catch(x => toast(x.message, 1));
-  if (b.dataset.a === 'block' && admin && confirm(`Khóa / từ chối "${u.username}"?`)) update(ref(db, `users/${id}`), { status: 'blocked' }).then(() => toast('Đã khóa ' + u.username)).catch(x => toast(x.message, 1));
+  if (b.dataset.a === 'ok') {
+    const p = { status: 'approved', approvedAt: Date.now(), approvedBy: me.username };
+    if (u.status === 'blocked') Object.assign(p, { blockReason: null, blockedAt: null, blockedBy: null });
+    update(ref(db, `users/${id}`), p).then(() => toast('Đã cấp quyền cho ' + u.username)).catch(x => toast(x.message, 1));
+  }
+  if (b.dataset.a === 'block' && admin) {
+    const reason = prompt(`Lý do khóa / từ chối "${u.username}":`);
+    if (reason === null) return;
+    if (!reason.trim()) return toast('Bắt buộc nhập lý do', 1);
+    update(ref(db, `users/${id}`), { status: 'blocked', blockReason: reason.trim().slice(0, 200), blockedAt: Date.now(), blockedBy: me.username }).then(() => toast('Đã khóa ' + u.username)).catch(x => toast(x.message, 1));
+  }
 };
 $('userList').onchange = e => {
   const s = e.target.closest('select[data-a=role]'); if (!s || !admin) return; const id = s.dataset.k, u = usersDB[id];
@@ -393,8 +424,28 @@ $('tpAdd').onclick = async () => {
     shop(`💵 KHÁCH ĐÃ NẠP TIỀN\nKhách: ${cu.username}\nSố tiền: ${fmt(amount)}\nSố dư mới: ${fmt(nb)}\nBởi: ${me.username}`);
   } finally { $('tpAdd').disabled = false; }
 };
+$('dcGo').onclick = async () => {
+  const uid = $('dcUser').value, amount = Math.round(Number($('dcAmt').value)), note = $('dcNote').value.trim();
+  if (!uid) return toast('Chọn khách hàng', 1);
+  if (!okAmt(amount)) return toast('Số tiền từ 1.000đ đến 100.000.000đ', 1);
+  if (!note) return toast('Nhập lý do trừ tiền', 1);
+  const cu = usersDB[uid];
+  if (!confirm(`Trừ ${fmt(amount)} của ${cu.username}?\nLý do: ${note}`)) return;
+  $('dcGo').disabled = true;
+  try {
+    const nb = await adjust(uid, -amount);
+    if (nb === null) return toast('Số dư không đủ hoặc không trừ được', 1);
+    try { await push(ref(db, 'topups'), { uid, username: cu.username, amount: -amount, note, status: 'approved', createdAt: Date.now(), handledBy: me.username, handledAt: Date.now(), notified: true, direct: true, deduct: true }); }
+    catch (e) { await adjust(uid, amount); return toast(e.message, 1); }
+    $('dcAmt').value = ''; $('dcNote').value = '';
+    toast(`Đã trừ ${fmt(amount)} của ${cu.username}`);
+    shop(`➖ TRỪ TIỀN KHÁCH\nKhách: ${cu.username}\nSố tiền: ${fmt(amount)}\nSố dư mới: ${fmt(nb)}\nLý do: ${note}\nBởi: ${me.username}`);
+  } finally { $('dcGo').disabled = false; }
+};
 $('topupList').onclick = async e => {
-  const b = e.target.closest('[data-a]'); if (!b || !staff) return; const id = b.dataset.k, t = topDB[id]; if (!t || t.status !== 'pending') return;
+  const b = e.target.closest('[data-a]'); if (!b || !staff) return; const id = b.dataset.k, t = topDB[id];
+  if (b.dataset.a === 'bill') { if (!billCache[id]) { try { billCache[id] = (await get(ref(db, 'bills/' + id))).val() || ''; } catch (x) { return toast(x.message, 1); } } if (!billCache[id]) return toast('Không có ảnh bill', 1); return renderTopups(); }
+  if (!t || t.status !== 'pending') return;
   const st = ref(db, `topups/${id}/status`);
   if (b.dataset.a === 'tpok') {
     if (!(await runTransaction(st, c => c === 'pending' ? 'approved' : undefined)).committed) return toast('Yêu cầu đã được xử lý', 1);
@@ -409,11 +460,42 @@ $('topupList').onclick = async e => {
     update(ref(db, `topups/${id}`), { handledBy: me.username, handledAt: Date.now() }).catch(() => {}); toast('Đã từ chối');
   }
 };
+const myId = () => me.uid.slice(0, 6).toUpperCase();
+const memo = () => 'Naptien' + myId();
+function renderQR() {
+  if (!me || staff) return;
+  $('memoBox').textContent = 'Nội dung chuyển khoản (bắt buộc ghi đúng):\n' + memo() + '\n(bấm để sao chép)';
+  const b = bankCfg, ok = b && b.bank && b.acc; $('qrBox').style.display = ok ? '' : 'none'; if (!ok) return;
+  const amt = Math.round(Number($('utAmt').value));
+  $('qrImg').src = `https://img.vietqr.io/image/${encodeURIComponent(b.bank)}-${encodeURIComponent(b.acc)}-compact2.png?${okAmt(amt) ? 'amount=' + amt + '&' : ''}addInfo=${encodeURIComponent(memo())}&accountName=${encodeURIComponent(b.name || '')}`;
+  $('bankTxt').textContent = `Ngân hàng: ${b.bank}\nSố TK: ${b.acc}\nChủ TK: ${b.name || ''}`;
+}
+$('memoBox').onclick = () => me && copy(memo());
+$('utAmt').oninput = renderQR;
+const shrink = f => new Promise((ok, no) => {
+  const img = new Image(), u = URL.createObjectURL(f);
+  img.onload = () => {
+    let w = img.width, h = img.height; const m = 900;
+    if (Math.max(w, h) > m) { const k = m / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+    const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(u);
+    let q = .7, d = c.toDataURL('image/jpeg', q); while (d.length > 380000 && q > .3) { q -= .1; d = c.toDataURL('image/jpeg', q); }
+    d.length > 380000 ? no() : ok(d);
+  };
+  img.onerror = no; img.src = u;
+});
+$('utFile').onchange = async e => {
+  const f = e.target.files[0]; billData = null; $('utPrev').style.display = 'none'; if (!f) return;
+  try { billData = await shrink(f); $('utPrev').src = billData; $('utPrev').style.display = ''; } catch { toast('Không đọc được ảnh, hãy chọn ảnh khác', 1); }
+};
 $('utGo').onclick = async () => {
   const amount = Math.round(Number($('utAmt').value)); if (!okAmt(amount)) return toast('Số tiền từ 1.000đ đến 100.000.000đ', 1);
+  if (!billData) return toast('Vui lòng tải ảnh bill chuyển khoản', 1);
   $('utGo').disabled = true;
-  try { await push(ref(db, 'topups'), { uid: me.uid, username: me.username, amount, note: $('utNote').value.trim(), status: 'pending', createdAt: Date.now(), notified: false }); $('utAmt').value = ''; $('utNote').value = ''; toast('Đã gửi yêu cầu, vui lòng chờ admin duyệt'); }
-  catch (e) { toast('Không gửi được: ' + e.message, 1); }
+  try {
+    const id = push(ref(db, 'topups')).key;
+    await update(ref(db), { ['topups/' + id]: { uid: me.uid, username: me.username, amount, note: memo(), status: 'pending', createdAt: Date.now(), notified: false, hasBill: true }, ['bills/' + id]: billData });
+    $('utAmt').value = ''; $('utFile').value = ''; $('utPrev').style.display = 'none'; billData = null; renderQR(); toast('Đã gửi yêu cầu, vui lòng chờ admin duyệt');
+  } catch (e) { toast('Không gửi được: ' + e.message, 1); }
   $('utGo').disabled = false;
 };
 
@@ -458,19 +540,20 @@ $('saveBulk').onclick = async () => {
 
 /* ---------- hệ thống (admin) ---------- */
 function fillTg() {
-  if (!admin || ['tgN', 'tgS', 'tgC'].includes(document.activeElement.id)) return;
-  const c = tg || {}; $('tgN').value = c.noticeToken || ''; $('tgS').value = c.shopToken || ''; $('tgC').value = c.chatId || ''; $('tgOn').checked = !!c.enabled;
+  if (!admin || ['tgN', 'tgS', 'tgC', 'tgB', 'tgBC'].includes(document.activeElement.id)) return;
+  const c = tg || {}; $('tgN').value = c.noticeToken || ''; $('tgS').value = c.shopToken || ''; $('tgC').value = c.chatId || ''; $('tgB').value = c.bankToken || ''; $('tgBC').value = c.bankChatId || ''; $('tgOn').checked = !!c.enabled;
 }
-const readTg = () => ({ noticeToken: $('tgN').value.trim(), shopToken: $('tgS').value.trim(), chatId: $('tgC').value.trim(), enabled: $('tgOn').checked });
+const readTg = () => ({ noticeToken: $('tgN').value.trim(), shopToken: $('tgS').value.trim(), chatId: $('tgC').value.trim(), bankToken: $('tgB').value.trim(), bankChatId: $('tgBC').value.trim(), enabled: $('tgOn').checked });
 $('tgSave').onclick = () => {
   const c = readTg(); if (c.enabled && (!c.noticeToken || !c.shopToken || !c.chatId)) return toast('Cần nhập đủ 2 token bot và Chat ID', 1);
   set(ref(db, 'settings/telegram'), c).then(() => toast('Đã lưu cài đặt Telegram')).catch(e => toast(e.message, 1));
 };
 $('tgTest').onclick = async () => {
   const c = readTg(); if (!c.chatId) return toast('Nhập Chat ID trước', 1);
-  const a = await tgSend('n', '✅ Bot thông báo: kết nối thành công', c), b = await tgSend('s', '✅ Bot acc + data: kết nối thành công', c);
-  toast(`Bot thông báo: ${a ? 'OK' : 'lỗi'} · Bot acc + data: ${b ? 'OK' : 'lỗi'}`, !(a && b));
+  const a = await tgSend('n', '✅ Bot thông báo: kết nối thành công', c), b = await tgSend('s', '✅ Bot acc + data: kết nối thành công', c), k = c.bankToken ? await tgSend('b', '✅ Bot bank: kết nối thành công', c) : true;
+  toast(`Bot thông báo: ${a ? 'OK' : 'lỗi'} · Bot acc + data: ${b ? 'OK' : 'lỗi'}${c.bankToken ? ' · Bot bank: ' + (k ? 'OK' : 'lỗi') : ''}`, !(a && b && k));
 };
+$('bkSave').onclick = () => { const bank = $('bkB').value.trim().toUpperCase(), acc = $('bkA').value.trim(), name = $('bkN').value.trim(); if (!bank || !acc) return toast('Nhập mã ngân hàng và số tài khoản', 1); set(ref(db, 'public/bank'), { bank, acc, name }).then(() => toast('Đã lưu tài khoản nhận tiền')).catch(e => toast(e.message, 1)); };
 $('depSave').onclick = () => set(ref(db, 'public/depositInfo'), $('depIn').value.trim().slice(0, 600)).then(() => toast('Đã lưu thông tin nạp tiền')).catch(e => toast(e.message, 1));
 
 /* ---------- sao lưu / khôi phục (admin) ---------- */
