@@ -64,11 +64,11 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <div class="row"><button class="btn s tg" data-theme-toggle title="Đổi nền sáng/tối">🌓</button><div style="text-align:right"><b id="hUser"></b><br><small id="hRole"></small></div><button class="btn s" id="btnOut">Thoát</button></div></header>
 
   <section class="rev st"><small>TỔNG DOANH THU BÁN HÀNG</small><div class="t" id="rTotal">0đ</div>
-    <div class="g"><span>Acc bán: <b id="rAcc">0</b></span><span>Data lấy: <b id="rData">0</b></span><span>Acc còn: <b id="sAcc">0</b></span><span>Data còn: <b id="sData">0</b></span></div></section>
-  <section class="rev us"><small>SỐ DƯ CỦA BẠN</small><div class="t" id="bal">0đ</div><div class="g">Acc 20.000đ · Data 1.000đ</div></section>
+    <div class="g"><span>Acc đã bán: <b id="rAcc">0</b></span><span>Acc còn: <b id="sAcc">0</b></span></div></section>
+  <section class="rev us"><small>SỐ DƯ CỦA BẠN</small><div class="t" id="bal">0đ</div><div class="g">Acc 20.000đ</div></section>
 
   <nav class="tabs">
-    <button class="tab st" data-t="acc">Bán acc</button><button class="tab st" data-t="data">Data bank</button>
+    <button class="tab st" data-t="acc">Bán acc</button>
     <button class="tab st" data-t="add">Thêm mới</button><button class="tab st" data-t="users">Khách hàng</button>
     <button class="tab st" data-t="topups">Nạp tiền <span id="bTp"></span></button><button class="tab st" data-t="tickets">Hỗ trợ <span id="bTk"></span></button>
     <button class="tab ad" data-t="system">Hệ thống</button>
@@ -82,17 +82,8 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
     <div id="accList" class="v on"></div>
   </section>
 
-  <section id="v-data" class="v st">
-    <input id="dataQ" class="in" placeholder="Tìm tên hoặc mã số..." style="margin:0">
-    <select id="dBankF" class="in" style="margin:0"></select>
-    <div class="chips" id="dataChips"></div>
-    <div id="dataList" class="v on"></div>
-  </section>
-
   <section id="v-add" class="v st">
-    <div class="chips"><button class="chip on" data-ty="acc">Acc bán</button><button class="chip" data-ty="data">Data bank</button></div>
     <div class="box" id="p-acc"><input id="aTk" class="in" placeholder="Tài khoản (tk)"><input id="aMk" class="in" placeholder="Mật khẩu (mk)"><input id="aRut" class="in" placeholder="Pass rút"><input id="aName" class="in" placeholder="Tên"><button class="btn w" id="saveAcc">Lưu acc</button></div>
-    <div class="box" id="p-data" style="display:none"><input id="dId" class="in" placeholder="Mã số / số tài khoản"><input id="dName" class="in" placeholder="Tên"><select id="dBank" class="in"></select><button class="btn w" id="saveData">Lưu data</button></div>
     <div class="box"><p class="hint" id="bulkHint"></p><textarea id="bulk" class="in"></textarea><button class="btn w" id="saveBulk">Nhập nhiều dòng</button></div>
   </section>
 
@@ -111,7 +102,7 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
       <input id="tgC" class="in" placeholder="Chat ID (-100...)"><label class="hint"><input type="checkbox" id="tgOn"> Bật thông báo Telegram</label>
       <div class="row"><button class="btn s" id="tgTest">Gửi thử</button><button class="btn" id="tgSave">Lưu</button></div></div>
     <div class="box"><b>Thông tin nạp tiền cho khách</b><br><br><textarea id="depIn" class="in" style="font-family:inherit" placeholder="VD: Vietcombank - 0123456789 - NGUYEN VAN A"></textarea><button class="btn" id="depSave">Lưu thông tin</button></div>
-    <div class="box"><b>Sao lưu dữ liệu</b><p class="hint">Sao lưu acc và data (không gồm người dùng, số dư).</p><div class="row"><button class="btn s" id="bkExp">Sao lưu JSON</button><button class="btn s" id="bkImp">Khôi phục JSON</button></div><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
+    <div class="box"><b>Sao lưu dữ liệu</b><p class="hint">Sao lưu danh sách acc (không gồm người dùng, số dư).</p><div class="row"><button class="btn s" id="bkExp">Sao lưu JSON</button><button class="btn s" id="bkImp">Khôi phục JSON</button></div><input type="file" id="bkFile" accept=".json,application/json" style="display:none"></div>
   </section>
 
   <section id="v-utopup" class="v us">
@@ -141,9 +132,8 @@ const firebaseConfig = {
 };
 const fb = initializeApp(firebaseConfig), db = getDatabase(fb), auth = getAuth(fb);
 
-const PA = 20000, PD = 1000, MAIL = '@qli-fc.app';
+const PA = 20000, MAIL = '@qli-fc.app';
 const ROLE = { admin:'Admin', support:'Admin hỗ trợ', user:'Khách' };
-const BANKS = 'VCB,BIDV,CTG,AGR,TCB,MB,ACB,VPB,STB,TPB,HDB,VIB,SHB,MSB,OCB,SSB,LPB,EIB,NAB,ABB,BAB,VAB,NCB,PGB,SCB,VBB,BVB,KLB,VCCB,SGB,GPB,CBB,IVB,COOP,CAKE,UBANK,TIMO,MOMO,ZALOPAY,KHAC'.split(',');
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = n => Number(n || 0).toLocaleString('vi-VN') + 'đ';
@@ -153,8 +143,8 @@ const toast = (m, e) => { const d = document.createElement('div'); d.textContent
 const copy = (t, m) => navigator.clipboard.writeText(t).then(() => toast(m || 'Đã sao chép'), () => toast('Không sao chép được', 1));
 
 let me, staff = false, admin = false, started = false, mode = 'login', registering = false, tried = false;
-let accDB = {}, dataDB = {}, usersDB = {}, topDB = {}, tkDB = {}, tg = null;
-let filt = { acc: 'avail', data: 'avail' }, addType = 'acc', secrets = false;
+let accDB = {}, usersDB = {}, topDB = {}, tkDB = {}, tg = null;
+let filt = { acc: 'avail' }, secrets = false;
 
 /* ---------- số dư & telegram ---------- */
 const adjust = async (uid, d) => {
@@ -239,7 +229,6 @@ function access() {
 const bad = e => toast('Lỗi dữ liệu: ' + e.message, 1);
 function startStaff() {
   onValue(ref(db, 'accban'), s => { accDB = s.val() || {}; renderAll(); }, bad);
-  onValue(ref(db, 'khodata'), s => { dataDB = s.val() || {}; renderAll(); }, bad);
   onValue(ref(db, 'settings/telegram'), s => { tg = s.val(); fillTg(); queue(); }, () => {});
   onValue(ref(db, 'users'), s => { usersDB = s.val() || {}; renderAll(); queue(); }, () => {});
   onValue(query(ref(db, 'topups'), limitToLast(200)), s => { topDB = s.val() || {}; renderAll(); queue(); }, () => {});
@@ -276,9 +265,8 @@ const mask = v => secrets ? esc(v) : '••••••••';
 const svgCp = '📋';
 
 function renderStats() {
-  const A = Object.values(accDB), D = Object.values(dataDB), s = A.filter(x => x.sold).length, t = D.filter(x => x.taken).length;
-  $('rTotal').textContent = fmt(s * PA + t * PD); $('rAcc').textContent = s; $('rData').textContent = t;
-  $('sAcc').textContent = A.length - s; $('sData').textContent = D.length - t;
+  const A = Object.values(accDB), n = A.filter(x => x.sold).length;
+  $('rTotal').textContent = fmt(n * PA); $('rAcc').textContent = n; $('sAcc').textContent = A.length - n;
 }
 function renderAcc() {
   const q = $('accQ').value.toLowerCase().trim(), all = Object.values(accDB), ns = all.filter(x => x.sold).length;
@@ -294,23 +282,6 @@ function renderAcc() {
     <button class="btn ${it.sold ? 's' : ''}" data-a="sell" data-k="${k}">${it.sold ? 'Hoàn lại' : 'Bán · 20k'}</button></div></div></div>`;
   }).join('');
   $('accList').innerHTML = h || `<div class="empty">${all.length ? 'Không có acc nào trong mục này.' : 'Chưa có acc. Sang tab "Thêm mới" để thêm.'}</div>`;
-}
-function renderData() {
-  const sel = $('dBankF'), cur = sel.value, cnt = {};
-  Object.values(dataDB).forEach(x => { cnt[x.bank] = (cnt[x.bank] || 0) + 1; });
-  sel.innerHTML = '<option value="">Tất cả ngân hàng</option>' + BANKS.filter(b => cnt[b]).map(b => `<option value="${b}">${b} (${cnt[b]})</option>`).join('');
-  sel.value = cnt[cur] ? cur : '';
-  const q = $('dataQ').value.toLowerCase().trim(), all = Object.values(dataDB), nt = all.filter(x => x.taken).length;
-  chips('dataChips', filt.data, all.length - nt, nt, all.length, 'Chưa lấy', 'Đã lấy');
-  const h = sorted(dataDB).filter(k => { const it = dataDB[k]; return !(filt.data === 'avail' && it.taken) && !(filt.data === 'done' && !it.taken) && (!sel.value || it.bank === sel.value) && (!q || [it.accId, it.name, it.bank].some(v => String(v || '').toLowerCase().includes(q))); }).map(k => {
-    const it = dataDB[k];
-    return `<div class="card"><div class="row"><div class="t">${esc(it.name)}</div><span class="pill ${it.taken ? 'a' : ''}">${it.taken ? 'Đã lấy' : esc(it.bank)}</span></div>
-    <button class="fld" data-a="did" data-k="${k}"><span>Mã số</span><span>${esc(it.accId)}</span></button><div class="fld"><span>Ngân hàng</span><span>${esc(it.bank)}</span></div>
-    <div class="foot row"><small>${it.taken ? 'Lấy: ' + fd(it.takenAt) + (it.takenToName ? ' · ' + esc(it.takenToName) : '') : fd(it.createdAt)}</small>
-    <div class="acts"><button class="btn s" data-a="dall" data-k="${k}">📋</button>${admin && !it.taken ? `<button class="btn r" data-a="ddel" data-k="${k}">Xóa</button>` : ''}
-    <button class="btn ${it.taken ? 's' : ''}" data-a="take" data-k="${k}">${it.taken ? 'Hoàn lại' : 'Lấy · 1k'}</button></div></div></div>`;
-  }).join('');
-  $('dataList').innerHTML = h || `<div class="empty">${all.length ? 'Không tìm thấy data phù hợp.' : 'Chưa có data. Sang tab "Thêm mới" để thêm.'}</div>`;
 }
 function renderUsers() {
   const ord = { pending: 0, approved: 1, blocked: 2 };
@@ -357,12 +328,11 @@ function renderMine() {
   $('myTop').innerHTML = Object.keys(topDB).sort((a, b) => (topDB[b].createdAt || 0) - (topDB[a].createdAt || 0)).map(id => { const t = topDB[id]; return `<div class="card"><div class="row"><div class="t">${fmt(t.amount)}<small>${fd(t.createdAt)}</small></div>${TP[t.status] || ''}</div></div>`; }).join('') || '<div class="empty">Chưa có yêu cầu nạp tiền.</div>';
   $('myTk').innerHTML = Object.keys(tkDB).sort((a, b) => (tkDB[b].createdAt || 0) - (tkDB[a].createdAt || 0)).map(id => { const t = tkDB[id]; return `<div class="card"><div class="row"><div class="t">${t.type === 'error' ? 'Báo lỗi' : 'Cần hỗ trợ'}<small>${fd(t.createdAt)}</small></div><span class="pill ${t.status === 'open' ? 'a' : 'g'}">${t.status === 'open' ? 'Đang xử lý' : 'Đã xử lý'}</span></div><div class="msg">${esc(t.message)}</div></div>`; }).join('') || '<div class="empty">Chưa gửi yêu cầu nào.</div>';
 }
-function renderAll() { if (staff) { renderStats(); renderAcc(); renderData(); renderUsers(); renderTopups(); renderTickets(); } else renderMine(); }
+function renderAll() { if (staff) { renderStats(); renderAcc(); renderUsers(); renderTopups(); renderTickets(); } else renderMine(); }
 
 /* ---------- bộ lọc & tab ---------- */
-$('accQ').oninput = renderAcc; $('dataQ').oninput = renderData; $('dBankF').onchange = renderData;
+$('accQ').oninput = renderAcc;
 $('accChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { filt.acc = b.dataset.f; renderAcc(); } };
-$('dataChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { filt.data = b.dataset.f; renderData(); } };
 $('btnSec').onclick = () => { secrets = !secrets; $('btnSec').textContent = secrets ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'; renderAcc(); };
 function tab(n) {
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === n));
@@ -371,43 +341,32 @@ function tab(n) {
 document.querySelectorAll('.tab').forEach(b => b.onclick = () => tab(b.dataset.t));
 
 /* ---------- bán acc / lấy data (an toàn khi bấm trùng) ---------- */
-const KIND = { acc: { path: 'accban', flag: 'sold', pre: 'sold', price: PA, label: 'acc' }, data: { path: 'khodata', flag: 'taken', pre: 'taken', price: PD, label: 'data' } };
-async function sell(kind, key) {
-  const K = KIND[kind], it = (kind === 'acc' ? accDB : dataDB)[key], uid = $('cust').value, cu = uid ? usersDB[uid] : null;
-  if (!confirm(`${kind === 'acc' ? 'Bán' : 'Lấy'} "${it.name}" ${cu ? 'cho ' + cu.username + ' (trừ ' + fmt(K.price) + ')' : '(bán ngoài, không trừ số dư)'}?`)) return;
-  const fl = ref(db, `${K.path}/${key}/${K.flag}`);
-  if (!(await runTransaction(fl, c => c ? undefined : true)).committed) return toast('Đã có người xử lý mục này', 1);
-  if (uid && (await adjust(uid, -K.price)) === null) { await set(fl, false); return toast('Khách không đủ số dư', 1); }
-  try {
-    await update(ref(db, `${K.path}/${key}`), { [K.pre + 'At']: Date.now(), [K.pre + 'By']: me.username, [K.pre + 'ToUid']: uid || null, [K.pre + 'ToName']: cu ? cu.username : null });
-  } catch (e) { if (uid) await adjust(uid, K.price); await set(fl, false).catch(() => {}); return toast(e.message, 1); }
-  if (kind === 'data') copy(`${it.accId}|${it.name}|${it.bank}`, 'Đã lấy data (đã sao chép)'); else toast('Đã bán acc · +20.000đ');
-  shop(`💰 ${kind === 'acc' ? 'ACC ĐÃ BÁN' : 'DATA ĐÃ LẤY'}\n${it.name}\nGiá: ${fmt(K.price)}${cu ? '\nKhách: ' + cu.username : '\nBán ngoài'}\nNgười xử lý: ${me.username}`);
+async function sell(key) {
+  const it = accDB[key], uid = $('cust').value, cu = uid ? usersDB[uid] : null;
+  if (!confirm(`Bán "${it.name}" ${cu ? 'cho ' + cu.username + ' (trừ ' + fmt(PA) + ')' : '(bán ngoài, không trừ số dư)'}?`)) return;
+  const fl = ref(db, `accban/${key}/sold`);
+  if (!(await runTransaction(fl, c => c ? undefined : true)).committed) return toast('Acc này vừa được bán rồi', 1);
+  if (uid && (await adjust(uid, -PA)) === null) { await set(fl, false); return toast('Khách không đủ số dư', 1); }
+  try { await update(ref(db, `accban/${key}`), { soldAt: Date.now(), soldBy: me.username, soldToUid: uid || null, soldToName: cu ? cu.username : null }); }
+  catch (e) { if (uid) await adjust(uid, PA); await set(fl, false).catch(() => {}); return toast(e.message, 1); }
+  toast('Đã bán acc · +20.000đ');
+  shop(`💰 ACC ĐÃ BÁN\n${it.name}\nGiá: ${fmt(PA)}${cu ? '\nKhách: ' + cu.username : '\nBán ngoài'}\nNgười bán: ${me.username}`);
 }
-async function undo(kind, key) {
-  const K = KIND[kind], it = (kind === 'acc' ? accDB : dataDB)[key];
-  if (!confirm(`Hoàn lại "${it.name}"?${it[K.pre + 'ToUid'] ? ' Số dư sẽ hoàn cho khách.' : ''}`)) return;
+async function undo(key) {
+  const it = accDB[key];
+  if (!confirm(`Hoàn lại acc "${it.name}"?${it.soldToUid ? ' Số dư sẽ hoàn cho khách.' : ''}`)) return;
   // giành quyền trước bằng transaction để không hoàn tiền 2 lần
-  if (!(await runTransaction(ref(db, `${K.path}/${key}/${K.flag}`), c => c ? false : undefined)).committed) return toast('Mục này đã được hoàn lại', 1);
-  const uid = it[K.pre + 'ToUid'];
-  if (uid) await adjust(uid, K.price);
-  update(ref(db, `${K.path}/${key}`), { [K.pre + 'At']: null, [K.pre + 'By']: null, [K.pre + 'ToUid']: null, [K.pre + 'ToName']: null }).then(() => toast('Đã hoàn lại'));
+  if (!(await runTransaction(ref(db, `accban/${key}/sold`), c => c ? false : undefined)).committed) return toast('Acc này đã được hoàn lại', 1);
+  if (it.soldToUid) await adjust(it.soldToUid, PA);
+  update(ref(db, `accban/${key}`), { soldAt: null, soldBy: null, soldToUid: null, soldToName: null }).then(() => toast('Đã hoàn lại'));
 }
 $('accList').onclick = async e => {
   const b = e.target.closest('[data-a]'); if (!b || !staff) return; const k = b.dataset.k, it = accDB[k]; if (!it) return;
   if (b.dataset.a === 'cp') copy(it[b.dataset.f] || '');
   if (b.dataset.a === 'all') copy(`${it.tk}|${it.mk}|${it.passRut}|${it.name}`, 'Đã sao chép: tk|mk|pass rút|tên');
-  if (b.dataset.a === 'sell') it.sold ? undo('acc', k) : sell('acc', k);
+  if (b.dataset.a === 'sell') it.sold ? undo(k) : sell(k);
   if (b.dataset.a === 'del' && admin && !it.sold && confirm(`Xóa acc "${it.name}"?`)) remove(ref(db, `accban/${k}`)).then(() => toast('Đã xóa'));
 };
-$('dataList').onclick = async e => {
-  const b = e.target.closest('[data-a]'); if (!b || !staff) return; const k = b.dataset.k, it = dataDB[k]; if (!it) return;
-  if (b.dataset.a === 'did') copy(it.accId, 'Đã sao chép mã số');
-  if (b.dataset.a === 'dall') copy(`${it.accId}|${it.name}|${it.bank}`, 'Đã sao chép: mã số|tên|mã');
-  if (b.dataset.a === 'take') it.taken ? undo('data', k) : sell('data', k);
-  if (b.dataset.a === 'ddel' && admin && !it.taken && confirm(`Xóa data "${it.name}"?`)) remove(ref(db, `khodata/${k}`)).then(() => toast('Đã xóa'));
-};
-
 /* ---------- người dùng ---------- */
 $('userList').onclick = e => {
   const b = e.target.closest('[data-a]'); if (!b || !staff) return; const id = b.dataset.k, u = usersDB[id]; if (!u || id === me.uid) return;
@@ -472,16 +431,9 @@ $('ticketList').onclick = e => {
 };
 
 /* ---------- thêm acc / data ---------- */
-$('dBank').innerHTML = '<option value="">Chọn ngân hàng</option>' + BANKS.map(b => `<option>${b}</option>`).join('');
-const hints = { acc: 'Mỗi dòng một acc: <code>tk|mk|pass rút|tên</code>. Acc đã có (kể cả đã bán) sẽ bị bỏ qua.', data: 'Mỗi dòng một data: <code>mã số|tên|mã ngân hàng</code> (VCB, MB, ACB...). Data đã có sẽ bị bỏ qua.' };
-function setType(t) {
-  addType = t; $('p-acc').style.display = t === 'acc' ? '' : 'none'; $('p-data').style.display = t === 'data' ? '' : 'none';
-  $('bulkHint').innerHTML = hints[t]; document.querySelectorAll('[data-ty]').forEach(b => b.classList.toggle('on', b.dataset.ty === t));
-}
-document.querySelectorAll('[data-ty]').forEach(b => b.onclick = () => setType(b.dataset.ty));
+$('bulkHint').innerHTML = 'Mỗi dòng một acc: <code>tk|mk|pass rút|tên</code>. Acc đã có (kể cả đã bán) sẽ bị bỏ qua.';
 const fk = s => encodeURIComponent(s).replace(/\./g, '%2E');
 const keyAcc = tk => 'a_' + fk(tk.trim().toLowerCase());
-const keyData = (id, bank) => 'd_' + fk(bank + '|' + id.replace(/\s+/g, '').toLowerCase());
 const create = async (path, key, p) => (await runTransaction(ref(db, `${path}/${key}`), c => c === null ? p : undefined)).committed;
 $('saveAcc').onclick = async () => {
   const tk = $('aTk').value.trim(), mk = $('aMk').value.trim(), passRut = $('aRut').value.trim(), name = $('aName').value.trim();
@@ -491,26 +443,13 @@ $('saveAcc').onclick = async () => {
     ['aTk', 'aMk', 'aRut', 'aName'].forEach(i => $(i).value = ''); toast('Đã thêm acc');
   } catch (e) { toast(e.message, 1); }
 };
-$('saveData').onclick = async () => {
-  const accId = $('dId').value.trim(), name = $('dName').value.trim(), bank = $('dBank').value;
-  if (!accId || !name || !bank) return toast('Nhập mã số, tên và chọn ngân hàng', 1);
-  try {
-    if (!(await create('khodata', keyData(accId, bank), { accId, name, bank, taken: false, createdAt: Date.now(), createdBy: me.username }))) return toast('Data này đã có trong kho hoặc đã lấy', 1);
-    ['dId', 'dName', 'dBank'].forEach(i => $(i).value = ''); toast('Đã thêm data');
-  } catch (e) { toast(e.message, 1); }
-};
 $('saveBulk').onclick = async () => {
   const lines = $('bulk').value.split('\n').map(l => l.trim()).filter(Boolean); if (!lines.length) return toast('Chưa có dòng nào', 1);
   $('saveBulk').disabled = true; let ok = 0, dup = 0, err = 0; const now = Date.now(), jobs = [];
   lines.forEach((l, i) => {
-    const p = l.split('|').map(s => s.trim());
-    if (addType === 'acc') {
-      const [tk, mk, passRut, ...r] = p, name = r.join('|'); if (!tk || !mk || !passRut || !name) return err++;
-      jobs.push(create('accban', keyAcc(tk), { tk, mk, passRut, name, sold: false, createdAt: now + i, createdBy: me.username }));
-    } else {
-      const [accId, name, b] = p, bank = String(b || '').toUpperCase().replace(/\s+/g, ''); if (!accId || !name || !BANKS.includes(bank)) return err++;
-      jobs.push(create('khodata', keyData(accId, bank), { accId, name, bank, taken: false, createdAt: now + i, createdBy: me.username }));
-    }
+    const [tk, mk, passRut, ...r] = l.split('|').map(x => x.trim()), name = r.join('|');
+    if (!tk || !mk || !passRut || !name) return err++;
+    jobs.push(create('accban', keyAcc(tk), { tk, mk, passRut, name, sold: false, createdAt: now + i, createdBy: me.username }));
   });
   try { (await Promise.all(jobs)).forEach(r => r ? ok++ : dup++); $('bulk').value = ''; toast(`Đã nhập ${ok} · trùng ${dup} · lỗi ${err}`, dup || err); }
   catch (e) { toast(e.message, 1); }
@@ -537,19 +476,18 @@ $('depSave').onclick = () => set(ref(db, 'public/depositInfo'), $('depIn').value
 /* ---------- sao lưu / khôi phục (admin) ---------- */
 $('bkExp').onclick = () => {
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportedAt: Date.now(), accban: accDB, khodata: dataDB }, null, 2)], { type: 'application/json' }));
+  a.href = URL.createObjectURL(new Blob([JSON.stringify({ exportedAt: Date.now(), accban: accDB }, null, 2)], { type: 'application/json' }));
   a.download = 'qlifc-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
 };
 $('bkImp').onclick = () => $('bkFile').click();
 $('bkFile').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   try {
-    const j = JSON.parse(await f.text()), A = Object.values(j.accban || {}), D = Object.values(j.khodata || {});
-    if (!A.length && !D.length) return toast('File không có dữ liệu hợp lệ', 1);
-    if (!confirm(`Khôi phục ${A.length} acc và ${D.length} data? Mục trùng sẽ bị bỏ qua.`)) return;
+    const A = Object.values(JSON.parse(await f.text()).accban || {});
+    if (!A.length) return toast('File không có dữ liệu hợp lệ', 1);
+    if (!confirm(`Khôi phục ${A.length} acc? Mục trùng sẽ bị bỏ qua.`)) return;
     let ok = 0, dup = 0, err = 0; const jobs = [];
     A.forEach(a => { if (!a || !a.tk || !a.mk || !a.passRut || !a.name) return err++; jobs.push(create('accban', keyAcc(a.tk), { tk: a.tk, mk: a.mk, passRut: a.passRut, name: a.name, sold: !!a.sold, soldAt: a.soldAt || null, soldBy: a.soldBy || null, createdAt: a.createdAt || Date.now(), createdBy: a.createdBy || me.username })); });
-    D.forEach(d => { const b = String(d && d.bank || '').toUpperCase(); if (!d || !d.accId || !d.name || !BANKS.includes(b)) return err++; jobs.push(create('khodata', keyData(d.accId, b), { accId: d.accId, name: d.name, bank: b, taken: !!d.taken, takenAt: d.takenAt || null, takenBy: d.takenBy || null, createdAt: d.createdAt || Date.now(), createdBy: d.createdBy || me.username })); });
     (await Promise.all(jobs)).forEach(r => r ? ok++ : dup++);
     toast(`Khôi phục ${ok} · trùng ${dup} · lỗi ${err}`, dup || err);
   } catch (x) { toast('Không đọc được file: ' + x.message, 1); }
@@ -564,7 +502,7 @@ document.querySelectorAll('[data-theme-toggle]').forEach(b => b.onclick = () => 
   try { localStorage.setItem('theme', theme); } catch {}
 });
 
-setType('acc'); setMode('login');
+setMode('login');
 </script>
 </body>
 </html>
