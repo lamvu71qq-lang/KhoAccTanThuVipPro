@@ -129,8 +129,8 @@ header h1{font-size:19px}header small{color:var(--mut);font-size:12px}
   </section>
   <section id="v-kho" class="v st">
     <div class="box ad"><b>Lưu ý của kho</b><br><br><select id="khoSel" class="in"></select><textarea id="khoNote" class="in" style="font-family:inherit" maxlength="1000" placeholder="Lưu ý hiển thị cho khách khi vào kho này..."></textarea><button class="btn" id="khoSave">Lưu lưu ý</button></div>
-    <div class="box"><b>Up thêm acc vào kho</b><br><br><select id="addKho" class="in"></select><input id="saTk" class="in" placeholder="Tài khoản"><input id="saMk" class="in" placeholder="Mật khẩu"><input id="saName" class="in" placeholder="Tên acc (không bắt buộc)"><input id="saPrice" type="number" class="in" placeholder="Giá bán (VND)"><input id="saNote" class="in" maxlength="200" placeholder="Lưu ý của acc này (không bắt buộc)"><button class="btn w" id="saGo">Thêm acc</button>
-      <p class="hint" style="margin-top:12px">Nhập nhiều dòng: <code>tk|mk|giá|tên|lưu ý</code> (tên và lưu ý có thể bỏ trống). Trùng tk + mk trong cùng một kho sẽ bị bỏ qua, khác kho thì được.</p><textarea id="saBulk" class="in"></textarea><button class="btn w" id="saBulkGo">Nhập nhiều dòng</button></div>
+    <div class="box"><b>Up thêm acc vào kho</b><br><br><select id="addKho" class="in"></select><input id="saTk" class="in" placeholder="Tài khoản"><input id="saMk" class="in" placeholder="Mật khẩu"><input id="saName" class="in" list="nameList" maxlength="80" placeholder="Tên acc (bắt buộc, khách chọn theo tên này)"><datalist id="nameList"></datalist><input id="saPrice" type="number" class="in" placeholder="Giá bán (VND)"><input id="saNote" class="in" maxlength="200" placeholder="Lưu ý của acc này (không bắt buộc)"><button class="btn w" id="saGo">Thêm acc</button>
+      <p class="hint" style="margin-top:12px">Nhập nhiều dòng: <code>tk|mk|giá|tên acc|lưu ý</code> (tên acc bắt buộc, lưu ý có thể bỏ trống). Trùng tk + mk trong cùng một tên acc của cùng kho sẽ bị bỏ qua; mục khác thì được.</p><textarea id="saBulk" class="in"></textarea><button class="btn w" id="saBulkGo">Nhập nhiều dòng</button></div>
     <div class="chips" id="kaChips"></div><div id="kaList" class="v on"></div>
   </section>
   <section id="v-req" class="v st sp"><div id="reqList" class="v on"></div></section>
@@ -603,8 +603,9 @@ function renderCust() {
   if (staff || !me) return;
   kchips('kChips', kho);
   $('kNote').style.display = noteOf(kho) ? '' : 'none'; $('kNote').textContent = 'Lưu ý ' + nm(kho) + ':\n' + noteOf(kho);
-  const items = Object.keys(shopDB).filter(k => shopDB[k].kho === kho && !shopDB[k].sold).sort((a, b) => shopDB[a].createdAt - shopDB[b].createdAt);
-  $('kList').innerHTML = items.map(k => { const it = shopDB[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${fmt(it.price)}</small></div><button class="btn" data-a="buy" data-k="${k}">Mua · ${fmt(it.price)}</button></div>${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Kho này đang hết acc.</div>';
+  const grp = {};
+  Object.keys(shopDB).filter(k => shopDB[k].kho === kho && !shopDB[k].sold).sort((a, b) => shopDB[a].createdAt - shopDB[b].createdAt).forEach(k => { const it = shopDB[k], g = grp[it.name] || (grp[it.name] = { name: it.name, left: 0, first: it }); g.left++; });
+  $('kList').innerHTML = Object.values(grp).map(g => `<div class="card"><div class="row"><div class="t">${esc(g.name)}<small>Còn ${g.left} acc · ${fmt(g.first.price)}</small></div><button class="btn" data-a="buy" data-g="${esc(g.name)}">Mua · ${fmt(g.first.price)}</button></div>${g.first.note ? `<div class="msg">${esc(g.first.note)}</div>` : ''}</div>`).join('') || '<div class="empty">Kho này đang hết acc.</div>';
   const mine = Object.keys(shopDB).filter(k => shopDB[k].buyerUid === me.uid).sort((a, b) => (shopDB[b].soldAt || 0) - (shopDB[a].soldAt || 0));
   $('myAcc').innerHTML = mine.map(k => { const it = shopDB[k], sc = secCache[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${nm(it.kho)} · ${fd(it.soldAt)}</small></div>${sc ? '' : `<button class="btn s" data-a="view" data-k="${k}">Xem acc</button>`}</div>${sc ? ['tk', 'mk'].map(f => `<button class="fld" data-a="cps" data-k="${k}" data-f="${f}"><span>${f.toUpperCase()}</span><span>${esc(sc[f])}</span></button>`).join('') : ''}${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}</div>`; }).join('') || '<div class="empty">Chưa mua acc nào.</div>';
   $('mySell').innerHTML = lst(sellDB, t => `<div class="card"><div class="row"><div class="t">${esc(t.note)}<small>${fd(t.createdAt)}${t.status === 'approved' ? ' · +' + fmt(t.amount) : ''}</small></div>${SS[t.status] || ''}</div></div>`) || '<div class="empty">Chưa gửi cầu thủ nào.</div>';
@@ -612,11 +613,18 @@ function renderCust() {
 }
 $('kChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { kho = b.dataset.f; renderCust(); } };
 $('kList').onclick = async e => {
-  const b = e.target.closest('[data-a=buy]'); if (!b || staff) return; const k = b.dataset.k, it = shopDB[k]; if (!it || it.sold) return;
-  if (it.price > me.balance) return toast('Số dư không đủ, hãy nạp thêm', 1);
-  if (!confirm(`Mua "${it.name}" giá ${fmt(it.price)}?`)) return;
-  try { await update(ref(db), { [`shopAcc/${k}/sold`]: true, [`shopAcc/${k}/buyerUid`]: me.uid, [`shopAcc/${k}/buyerName`]: me.username, [`shopAcc/${k}/soldAt`]: Date.now(), [`users/${me.uid}/balance`]: me.balance - it.price }); ping('buy', k); toast('Mua thành công, xem ở mục "Acc đã mua"'); }
-  catch { toast('Không mua được: acc vừa bán hoặc số dư không đủ', 1); }
+  const b = e.target.closest('[data-a=buy]'); if (!b || staff) return; const name = b.dataset.g;
+  let cands = Object.keys(shopDB).filter(k => shopDB[k].kho === kho && shopDB[k].name === name && !shopDB[k].sold).sort((x, y) => shopDB[x].createdAt - shopDB[y].createdAt);
+  if (!cands.length) return toast('Hết acc loại này', 1);
+  const price = shopDB[cands[0]].price; cands = cands.filter(k => shopDB[k].price === price);
+  if (price > me.balance) return toast('Số dư không đủ, hãy nạp thêm', 1);
+  if (!confirm(`Mua "${name}" (${nm(kho)}) giá ${fmt(price)}?`)) return;
+  b.disabled = true;
+  for (const k of cands.slice(0, 5)) {
+    try { await update(ref(db), { [`shopAcc/${k}/sold`]: true, [`shopAcc/${k}/buyerUid`]: me.uid, [`shopAcc/${k}/buyerName`]: me.username, [`shopAcc/${k}/soldAt`]: Date.now(), [`users/${me.uid}/balance`]: me.balance - price }); ping('buy', k); toast('Mua thành công, xem ở mục "Acc đã mua"'); b.disabled = false; return; }
+    catch {}
+  }
+  toast('Không mua được: acc vừa bán hết hoặc số dư không đủ', 1); b.disabled = false;
 };
 $('myAcc').onclick = async e => {
   const b = e.target.closest('[data-a]'); if (!b) return; const k = b.dataset.k;
@@ -649,17 +657,21 @@ function renderKho() {
   if (!staff) return;
   kchips('kaChips', kaf);
   const ks = Object.keys(shopDB).filter(k => shopDB[k].kho === kaf).sort((a, b) => shopDB[b].createdAt - shopDB[a].createdAt);
-  $('kaList').innerHTML = `<div class="hint">${nm(kaf)}: còn ${ks.filter(k => !shopDB[k].sold).length} / ${ks.length} acc</div>` + (ks.map(k => { const it = shopDB[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${fmt(it.price)} · ${it.sold ? 'Bán: ' + esc(it.buyerName || '') + ' · ' + fd(it.soldAt) : fd(it.createdAt)}</small></div><span class="pill ${it.sold ? 'a' : 'g'}">${it.sold ? 'Đã bán' : 'Còn hàng'}</span></div>${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}${admin && !it.sold ? `<div class="foot acts"><button class="btn r" data-a="kdel" data-k="${k}">Xóa</button></div>` : ''}</div>`; }).join('') || '<div class="empty">Kho chưa có acc.</div>');
+  const by = {}; ks.forEach(k => { const it = shopDB[k], g = by[it.name] || (by[it.name] = { l: 0, t: 0 }); g.t++; if (!it.sold) g.l++; });
+  $('nameList').innerHTML = [...new Set(Object.keys(shopDB).filter(k => shopDB[k].kho === $('addKho').value).map(k => shopDB[k].name))].map(n => `<option value="${esc(n)}">`).join('');
+  $('kaList').innerHTML = `<div class="hint">${nm(kaf)}: còn ${ks.filter(k => !shopDB[k].sold).length} / ${ks.length} acc${Object.keys(by).map(n => '<br>• ' + esc(n) + ': còn ' + by[n].l + ' / ' + by[n].t).join('')}</div>` + (ks.map(k => { const it = shopDB[k]; return `<div class="card"><div class="row"><div class="t">${esc(it.name)}<small>${fmt(it.price)} · ${it.sold ? 'Bán: ' + esc(it.buyerName || '') + ' · ' + fd(it.soldAt) : fd(it.createdAt)}</small></div><span class="pill ${it.sold ? 'a' : 'g'}">${it.sold ? 'Đã bán' : 'Còn hàng'}</span></div>${it.note ? `<div class="msg">${esc(it.note)}</div>` : ''}${admin && !it.sold ? `<div class="foot acts"><button class="btn r" data-a="kdel" data-k="${k}">Xóa</button></div>` : ''}</div>`; }).join('') || '<div class="empty">Kho chưa có acc.</div>');
 }
 $('kaChips').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { kaf = b.dataset.f; renderKho(); } };
 $('kaList').onclick = e => { const b = e.target.closest('[data-a=kdel]'); if (!b || !admin) return; const k = b.dataset.k; if (shopDB[k] && !shopDB[k].sold && confirm('Xóa acc này khỏi kho?')) update(ref(db), { ['shopAcc/' + k]: null, ['shopSecret/' + k]: null }).then(() => toast('Đã xóa')).catch(x => toast(x.message, 1)); };
+$('addKho').onchange = renderKho;
 $('khoSel').onchange = () => { $('khoNote').value = noteOf($('khoSel').value); };
 $('khoSave').onclick = () => update(ref(db, 'public/khoNotes'), { [$('khoSel').value]: $('khoNote').value.trim().slice(0, 1000) }).then(() => toast('Đã lưu lưu ý kho')).catch(x => toast(x.message, 1));
 const sha = async x => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(x)))].map(b => b.toString(16).padStart(2, '0')).join('');
-// id cố định theo (kho + tk + mk): cùng kho không up trùng được, khác kho thì được
+// id cố định theo (kho + tên acc + tk + mk): trùng trong cùng một mục thì chặn, mục khác thì được
 const addShop = async (kh, tk, mk, name, price, note, t) => {
-  const id = 's_' + kh + '_' + (await sha(`${kh}|${tk.toLowerCase()}|${mk}`)).slice(0, 40);
-  const payload = { kho: kh, name: name || tk, price, note, sold: false, createdAt: t, createdBy: me.username };
+  name = name.trim();
+  const id = 's_' + kh + '_' + (await sha(`${kh}|${name.toLowerCase()}|${tk.toLowerCase()}|${mk}`)).slice(0, 40);
+  const payload = { kho: kh, name, price, note, sold: false, createdAt: t, createdBy: me.username };
   if (!(await runTransaction(ref(db, 'shopAcc/' + id), c => c === null ? payload : undefined)).committed) return false;
   try { await set(ref(db, 'shopSecret/' + id), { tk, mk }); }
   catch (e) { await remove(ref(db, 'shopAcc/' + id)).catch(() => {}); throw e; }
@@ -668,16 +680,16 @@ const addShop = async (kh, tk, mk, name, price, note, t) => {
 const okPrice = p => p >= 1000 && p <= 100000000;
 $('saGo').onclick = async () => {
   const tk = $('saTk').value.trim(), mk = $('saMk').value.trim(), price = Math.round(Number($('saPrice').value));
-  if (!tk || !mk) return toast('Nhập tài khoản và mật khẩu', 1); if (!okPrice(price)) return toast('Giá từ 1.000đ đến 100.000.000đ', 1);
+  if (!tk || !mk) return toast('Nhập tài khoản và mật khẩu', 1); if (!$('saName').value.trim()) return toast('Nhập tên acc để khách lựa chọn', 1); if (!okPrice(price)) return toast('Giá từ 1.000đ đến 100.000.000đ', 1);
   try {
-    if (!(await addShop($('addKho').value, tk, mk, $('saName').value.trim(), price, $('saNote').value.trim(), Date.now()))) return toast('Acc này (tk + mk) đã có trong ' + nm($('addKho').value), 1);
+    if (!(await addShop($('addKho').value, tk, mk, $('saName').value.trim(), price, $('saNote').value.trim(), Date.now()))) return toast('Acc này (tk + mk) đã có trong mục "' + $('saName').value.trim() + '" của ' + nm($('addKho').value), 1);
     ['saTk', 'saMk', 'saName', 'saNote'].forEach(i => $(i).value = ''); toast('Đã thêm acc vào ' + nm($('addKho').value));
   } catch (e) { toast(e.message, 1); }
 };
 $('saBulkGo').onclick = async () => {
   const lines = $('saBulk').value.split('\n').map(l => l.trim()).filter(Boolean); if (!lines.length) return toast('Chưa có dòng nào', 1);
   $('saBulkGo').disabled = true; let ok = 0, dup = 0, err = 0; const now = Date.now(), kh = $('addKho').value, jobs = [];
-  lines.forEach((l, i) => { const [tk, mk, pr, name, ...r] = l.split('|').map(x => x.trim()), price = Math.round(Number(pr)); if (!tk || !mk || !okPrice(price)) return err++; jobs.push(addShop(kh, tk, mk, name, price, r.join('|'), now + i).then(r2 => r2 ? ok++ : dup++, () => err++)); });
+  lines.forEach((l, i) => { const [tk, mk, pr, name, ...r] = l.split('|').map(x => x.trim()), price = Math.round(Number(pr)); if (!tk || !mk || !name || !okPrice(price)) return err++; jobs.push(addShop(kh, tk, mk, name, price, r.join('|'), now + i).then(r2 => r2 ? ok++ : dup++, () => err++)); });
   await Promise.all(jobs); $('saBulk').value = ''; toast(`Đã nhập ${ok} · trùng ${dup} · lỗi ${err}`, dup || err); $('saBulkGo').disabled = false;
 };
 
